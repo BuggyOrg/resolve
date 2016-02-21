@@ -1,0 +1,11 @@
+{
+  "test/atomic": {
+    "id": "test/atomic",
+    "version": "0.1.0",
+    "inputPorts": {},
+    "outputPorts": {
+      "output": "string"
+    },
+    "atomic": true
+  }
+}
