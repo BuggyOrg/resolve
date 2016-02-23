@@ -3,12 +3,14 @@
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import resolve from '../src/api'
+import * as compound from '../src/compound'
 import graphlib from 'graphlib'
 import gdot from 'graphlib-dot'
 import fs from 'fs'
 import {extname} from 'path'
 import 'babel-register'
 import * as components from './components.json'
+import _ from 'lodash'
 
 chai.use(chaiAsPromised)
 var expect = chai.expect
@@ -45,7 +47,26 @@ describe('Resolving port graph nodes', () => {
     return expect(resolve(nonExistentGraph, resolveFn)).to.be.rejected
   })
 
-  it('`resolve` queries compound node data and flattens the inner implementation', () => {
-    
+  it('`flattenComponents` flattening an atomic returns only the atomic', () => {
+    var atomicNode = {v: 'test', value: {meta: 'test/test', atomic: true}}
+    var atomic = compound.flattenCompound(atomicNode)
+    expect(atomic).to.be.an('array')
+    expect(atomic).to.have.length(1)
+    expect(atomic[0]).to.deep.equal(atomicNode)
+  })
+
+  it('`flattenComponents` flattens a compound node into its parts and the parent node', () => {
+    var compoundNode = {
+      v: 'test', value: {
+        id: 'test/test', implementation: {
+          nodes: [components['test/atomic']],
+          edges: []
+        }
+      }
+    }
+    var comp = compound.flattenCompound(compoundNode)
+    expect(comp).to.have.length(2)
+    expect(_.filter(comp, (node) => node.value.id === 'test/test')).to.have.length(1)
+    expect(_.filter(comp, (node) => node.value.id === 'test/atomic')).to.have.length(1)
   })
 })

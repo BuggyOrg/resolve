@@ -1,9 +1,12 @@
 
+import cuid from 'cuid'
+import _ from 'lodash'
+
 /**
  * queries all information on compound nodes.
  */
 export function queryCompound (node, resolveFn) {
-  
+  return node
 }
 
 /**
@@ -12,5 +15,11 @@ export function queryCompound (node, resolveFn) {
  * @return {Array} An array containing all the atomics of the compound node.
  */
 export function flattenCompound (node) {
-  return []
+  if (node.value.atomic) {
+    return [node]
+  } else {
+    var impls = _.map(node.value.implementation.nodes, (node) => ({ v: node.id + ':' + cuid(), value: node }))
+    return [node].concat(impls)
+  }
 }
+
