@@ -27,6 +27,8 @@
   },
   "dependencies": {
     "@buggyorg/component-library": "^0.2.2",
-    "graphlib": "^2.1.0"
+    "co": "^4.6.0",
+    "graphlib": "^2.1.0",
+    "lodash": "^4.5.1"
   }
 }

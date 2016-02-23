@@ -22,14 +22,17 @@ var readFixture = (file) => {
 }
 
 const resolveFn = (name, version) => {
-  return components[name]
+  return Promise.resolve(components[name])
 }
 
 describe('Elastic search meta information interface', () => {
   it('`resolve` should leave atomics untouched', () => {
     var atomicsGraph = readFixture('atomic.dot')
-    var resolved = resolve(atomicsGraph, resolveFn)
-    expect(resolved).to.be.an('object')
-    expect(resolved.nodes()).to.have.length(1)
+    return resolve(atomicsGraph, resolveFn)
+    .then(resolved => {
+      expect(resolved).to.be.an('object')
+      expect(resolved.nodes()).to.have.length(1)
+      expect(resolved.node('a').node.atomic).to.be.true
+    })
   })
 })
