@@ -22,17 +22,30 @@ var readFixture = (file) => {
 }
 
 const resolveFn = (name, version) => {
-  return Promise.resolve(components[name])
+  if (name in components) {
+    return Promise.resolve(components[name])
+  } else {
+    return Promise.reject('Component "' + name + '" undefined')
+  }
 }
 
-describe('Elastic search meta information interface', () => {
-  it('`resolve` should leave atomics untouched', () => {
+describe('Resolving port graph nodes', () => {
+  it('`resolve` should only add component information to atomics', () => {
     var atomicsGraph = readFixture('atomic.dot')
     return resolve(atomicsGraph, resolveFn)
     .then(resolved => {
       expect(resolved).to.be.an('object')
       expect(resolved.nodes()).to.have.length(1)
-      expect(resolved.node('a').node.atomic).to.be.true
+      expect(resolved.node('a').component.atomic).to.be.true
     })
+  })
+
+  it('`resolve` fails if a component is not defined', () => {
+    var nonExistentGraph = readFixture('nonExistent.dot')
+    return expect(resolve(nonExistentGraph, resolveFn)).to.be.rejected
+  })
+
+  it('`resolve` queries compound node data and flattens the inner implementation', () => {
+    
   })
 })
