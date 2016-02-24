@@ -14,7 +14,7 @@
     "inputPorts": {},
     "outputPorts": {},
     "implementation": {
-      "nodes": [{"meta": "test/atomic"}],
+      "nodes": [{"meta": "test/atomic", "version": "0.1.0"}],
       "edges": []
     }
   }

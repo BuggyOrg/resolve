@@ -1,19 +1,27 @@
 
-import cuid from 'cuid'
 import _ from 'lodash'
 
 /**
  * queries all information on compound nodes.
  */
 export function queryCompound (node, resolveFn) {
-  var nodes = _(node.value.implementation.nodes).chain()
-    .map(resolveFn)
+  var nodes = _(node.implementation.nodes)
+    .map((node) => resolveFn(node.meta, node.version))
+    .value()
   return Promise.all(nodes)
     .then((nodes) => {
-      var queriedNodes = nodes
-      var newNode = _.cloneDeep(node)
-      _.set(newNode, 'value.implementation.nodes', queriedNodes)
-      return newNode
+      var atomics = _.filter(nodes, (node) => node.atomic)
+      var queriedNodes = _(nodes)
+        .filter((node) => !node.atomic)
+        .map(_.partial(queryCompound, _, resolveFn))
+        .value()
+
+      return Promise.all(queriedNodes)
+        .then((qNodes) => {
+          var newNode = _.cloneDeep(node)
+          _.set(newNode, 'implementation.nodes', queriedNodes.concat(atomics))
+          return newNode
+        })
     })
 }
 
@@ -23,11 +31,10 @@ export function queryCompound (node, resolveFn) {
  * @return {Array} An array containing all the atomics of the compound node.
  */
 export function flattenCompound (node) {
-  if (node.value.atomic) {
+  if (node.atomic) {
     return [node]
   } else {
-    var impls = _(node.value.implementation.nodes)
-      .map((node) => ({ v: node.id + ':' + cuid(), value: node }))
+    var impls = _(node.implementation.nodes)
       .map(flattenCompound)
       .flatten()
       .value()

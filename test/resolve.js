@@ -51,7 +51,7 @@ describe('Resolving port graph nodes', () => {
   })
 
   it('`flattenComponents` flattening an atomic returns only the atomic', () => {
-    var atomicNode = {v: 'test', value: {meta: 'test/test', atomic: true}}
+    var atomicNode = {id: 'test/test', atomic: true}
     var atomic = compound.flattenCompound(atomicNode)
     expect(atomic).to.be.an('array')
     expect(atomic).to.have.length(1)
@@ -60,52 +60,50 @@ describe('Resolving port graph nodes', () => {
 
   it('`flattenComponents` flattens a compound node into its parts and the parent node', () => {
     var compoundNode = {
-      v: 'test', value: {
-        id: 'test/test', implementation: {
-          nodes: [components['test/atomic']],
-          edges: []
-        }
+      id: 'test/test', implementation: {
+        nodes: [components['test/atomic']],
+        edges: []
       }
     }
     var comp = compound.flattenCompound(compoundNode)
     expect(comp).to.have.length(2)
-    expect(_.filter(comp, (node) => node.value.id === 'test/test')).to.have.length(1)
-    expect(_.filter(comp, (node) => node.value.id === 'test/atomic')).to.have.length(1)
+    expect(_.filter(comp, (node) => node.id === 'test/test')).to.have.length(1)
+    expect(_.filter(comp, (node) => node.id === 'test/atomic')).to.have.length(1)
   })
 
-/*  it('`flattenComponents` flattens deep', () => {
+  it('`flattenComponents` flattens deep', () => {
+    var cmpd = components['test/compound']
+    var atm = components['test/atomic']
+    var newCmpd = _.cloneDeep(cmpd)
+    newCmpd.implementation.nodes[0] = atm
     var compoundNode = {
-      v: 'test', value: {
-        id: 'test/test', implementation: {
-          nodes: [test/compound'],
-          edges: []
-        }
+      id: 'test/test', implementation: {
+        nodes: [newCmpd],
+        edges: []
       }
     }
     var comp = compound.flattenCompound(compoundNode)
     expect(comp).to.have.length(3)
-    expect(_.filter(comp, (node) => node.value.id === 'test/test')).to.have.length(1)
-    expect(_.filter(comp, (node) => node.value.id === 'test/atomic')).to.have.length(1)
-    expect(_.filter(comp, (node) => node.value.id === 'test/compound')).to.have.length(1)
-  })*/
+    expect(_.filter(comp, (node) => node.id === 'test/test')).to.have.length(1)
+    expect(_.filter(comp, (node) => node.id === 'test/atomic')).to.have.length(1)
+    expect(_.filter(comp, (node) => node.id === 'test/compound')).to.have.length(1)
+  })
 
   it('`queryCompound` resolves each inner node', () => {
     var compoundNode = {
       v: 'test', value: {
         id: 'test/test', implementation: {
-          nodes: ['test/atomic'],
+          nodes: [{meta: 'test/atomic', version: '0.1.0'}],
           edges: []
         }
       }
     }
-    return compound.queryCompound(compoundNode, resolveFn)
+    return compound.queryCompound(compoundNode.value, resolveFn)
     .then(comp => {
       expect(comp).to.deep.equal({
-        v: 'test', value: {
-          id: 'test/test', implementation: {
-            nodes: [components['test/atomic']],
-            edges: []
-          }
+        id: 'test/test', implementation: {
+          nodes: [components['test/atomic']],
+          edges: []
         }
       })
     })
@@ -115,16 +113,16 @@ describe('Resolving port graph nodes', () => {
     var compoundNode = {
       v: 'test', value: {
         id: 'test/test', implementation: {
-          nodes: ['test/compound'],
+          nodes: [{meta: 'test/compound', version: '0.1.0'}],
           edges: []
         }
       }
     }
     var resSpy = sinon.spy(resolveFn)
-    return compound.queryCompound(compoundNode, resSpy)
+    return compound.queryCompound(compoundNode.value, resSpy)
       .then(() => {
-        expect(resSpy).to.have.been.calledWith('test/compound')
-        expect(resSpy).to.have.been.calledWith('test/atomic')
+        expect(resSpy).to.have.been.calledWith('test/compound', '0.1.0')
+        expect(resSpy).to.have.been.calledWith('test/atomic', '0.1.0')
       })
   })
 })
