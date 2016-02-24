@@ -6,7 +6,15 @@ import _ from 'lodash'
  * queries all information on compound nodes.
  */
 export function queryCompound (node, resolveFn) {
-  return node
+  var nodes = _(node.value.implementation.nodes).chain()
+    .map(resolveFn)
+  return Promise.all(nodes)
+    .then((nodes) => {
+      var queriedNodes = nodes
+      var newNode = _.cloneDeep(node)
+      _.set(newNode, 'value.implementation.nodes', queriedNodes)
+      return newNode
+    })
 }
 
 /**
@@ -18,7 +26,11 @@ export function flattenCompound (node) {
   if (node.value.atomic) {
     return [node]
   } else {
-    var impls = _.map(node.value.implementation.nodes, (node) => ({ v: node.id + ':' + cuid(), value: node }))
+    var impls = _(node.value.implementation.nodes)
+      .map((node) => ({ v: node.id + ':' + cuid(), value: node }))
+      .map(flattenCompound)
+      .flatten()
+      .value()
     return [node].concat(impls)
   }
 }

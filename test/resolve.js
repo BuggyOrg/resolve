@@ -2,6 +2,8 @@
 
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import sinonChai from 'sinon-chai'
+import sinon from 'sinon'
 import resolve from '../src/api'
 import * as compound from '../src/compound'
 import graphlib from 'graphlib'
@@ -13,6 +15,7 @@ import * as components from './components.json'
 import _ from 'lodash'
 
 chai.use(chaiAsPromised)
+chai.use(sinonChai)
 var expect = chai.expect
 
 var readFixture = (file) => {
@@ -68,5 +71,60 @@ describe('Resolving port graph nodes', () => {
     expect(comp).to.have.length(2)
     expect(_.filter(comp, (node) => node.value.id === 'test/test')).to.have.length(1)
     expect(_.filter(comp, (node) => node.value.id === 'test/atomic')).to.have.length(1)
+  })
+
+/*  it('`flattenComponents` flattens deep', () => {
+    var compoundNode = {
+      v: 'test', value: {
+        id: 'test/test', implementation: {
+          nodes: [test/compound'],
+          edges: []
+        }
+      }
+    }
+    var comp = compound.flattenCompound(compoundNode)
+    expect(comp).to.have.length(3)
+    expect(_.filter(comp, (node) => node.value.id === 'test/test')).to.have.length(1)
+    expect(_.filter(comp, (node) => node.value.id === 'test/atomic')).to.have.length(1)
+    expect(_.filter(comp, (node) => node.value.id === 'test/compound')).to.have.length(1)
+  })*/
+
+  it('`queryCompound` resolves each inner node', () => {
+    var compoundNode = {
+      v: 'test', value: {
+        id: 'test/test', implementation: {
+          nodes: ['test/atomic'],
+          edges: []
+        }
+      }
+    }
+    return compound.queryCompound(compoundNode, resolveFn)
+    .then(comp => {
+      expect(comp).to.deep.equal({
+        v: 'test', value: {
+          id: 'test/test', implementation: {
+            nodes: [components['test/atomic']],
+            edges: []
+          }
+        }
+      })
+    })
+  })
+
+  it('`queryCompound` resolves deeply', () => {
+    var compoundNode = {
+      v: 'test', value: {
+        id: 'test/test', implementation: {
+          nodes: ['test/compound'],
+          edges: []
+        }
+      }
+    }
+    var resSpy = sinon.spy(resolveFn)
+    return compound.queryCompound(compoundNode, resSpy)
+      .then(() => {
+        expect(resSpy).to.have.been.calledWith('test/compound')
+        expect(resSpy).to.have.been.calledWith('test/atomic')
+      })
   })
 })

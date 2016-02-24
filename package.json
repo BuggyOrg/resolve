@@ -23,6 +23,8 @@
     "chai-as-promised": "^5.2.0",
     "graphlib-dot": "^0.6.2",
     "mocha": "^2.4.5",
+    "sinon": "^1.17.3",
+    "sinon-chai": "^2.8.0",
     "standard": "^6.0.7"
   },
   "dependencies": {
