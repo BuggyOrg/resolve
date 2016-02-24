@@ -28,7 +28,7 @@ var readFixture = (file) => {
 
 const resolveFn = (name, version) => {
   if (name in components) {
-    return Promise.resolve(components[name])
+    return Promise.resolve(_.cloneDeep(components[name]))
   } else {
     return Promise.reject('Component "' + name + '" undefined')
   }
@@ -50,79 +50,62 @@ describe('Resolving port graph nodes', () => {
     return expect(resolve(nonExistentGraph, resolveFn)).to.be.rejected
   })
 
-  it('`flattenComponents` flattening an atomic returns only the atomic', () => {
+  it('`flattenNode` flattening an atomic returns only the atomic', () => {
     var atomicNode = {id: 'test/test', atomic: true}
-    var atomic = compound.flattenCompound(atomicNode)
+    var atomic = compound.flattenNode(atomicNode)
     expect(atomic).to.be.an('array')
     expect(atomic).to.have.length(1)
     expect(atomic[0]).to.deep.equal(atomicNode)
   })
 
-  it('`flattenComponents` flattens a compound node into its parts and the parent node', () => {
+  it('`flattenNode` flattens a compound node into its parts and the parent node', () => {
     var compoundNode = {
       id: 'test/test', implementation: {
         nodes: [components['test/atomic']],
         edges: []
       }
     }
-    var comp = compound.flattenCompound(compoundNode)
+    var comp = compound.flattenNode(compoundNode)
     expect(comp).to.have.length(2)
     expect(_.filter(comp, (node) => node.id === 'test/test')).to.have.length(1)
     expect(_.filter(comp, (node) => node.id === 'test/atomic')).to.have.length(1)
   })
 
-  it('`flattenComponents` flattens deep', () => {
+  it('`flattenNode` flattens deep', () => {
     var cmpd = components['test/compound']
     var atm = components['test/atomic']
-    var newCmpd = _.cloneDeep(cmpd)
-    newCmpd.implementation.nodes[0] = atm
+    cmpd.implementation.nodes[0] = atm
     var compoundNode = {
       id: 'test/test', implementation: {
-        nodes: [newCmpd],
+        nodes: [cmpd],
         edges: []
       }
     }
-    var comp = compound.flattenCompound(compoundNode)
+    var comp = compound.flattenNode(compoundNode)
     expect(comp).to.have.length(3)
     expect(_.filter(comp, (node) => node.id === 'test/test')).to.have.length(1)
     expect(_.filter(comp, (node) => node.id === 'test/atomic')).to.have.length(1)
     expect(_.filter(comp, (node) => node.id === 'test/compound')).to.have.length(1)
   })
 
-  it('`queryCompound` resolves each inner node', () => {
-    var compoundNode = {
-      v: 'test', value: {
-        id: 'test/test', implementation: {
-          nodes: [{meta: 'test/atomic', version: '0.1.0'}],
-          edges: []
-        }
-      }
-    }
-    return compound.queryCompound(compoundNode.value, resolveFn)
+  it('`queryNode` resolves each inner node', () => {
+    var node = {meta: 'test/atomic', version: '0.1.0'}
+    return compound.queryNode(node, resolveFn)
     .then(comp => {
-      expect(comp).to.deep.equal({
-        id: 'test/test', implementation: {
-          nodes: [components['test/atomic']],
-          edges: []
-        }
-      })
+      expect(comp).to.deep.equal(components['test/atomic'])
     })
   })
 
-  it('`queryCompound` resolves deeply', () => {
-    var compoundNode = {
-      v: 'test', value: {
-        id: 'test/test', implementation: {
-          nodes: [{meta: 'test/compound', version: '0.1.0'}],
-          edges: []
-        }
-      }
-    }
+  it('`queryNode` resolves deeply', () => {
+    var node = {meta: 'test/compound', version: '0.1.0'}
     var resSpy = sinon.spy(resolveFn)
-    return compound.queryCompound(compoundNode.value, resSpy)
+    return compound.queryNode(node, resSpy)
       .then(() => {
         expect(resSpy).to.have.been.calledWith('test/compound', '0.1.0')
         expect(resSpy).to.have.been.calledWith('test/atomic', '0.1.0')
       })
+  })
+
+  it('`queryNode` resolves recursive nodes only once', () => {
   })
 })

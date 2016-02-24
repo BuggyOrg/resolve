@@ -4,25 +4,19 @@ import _ from 'lodash'
 /**
  * queries all information on compound nodes.
  */
-export function queryCompound (node, resolveFn) {
-  var nodes = _(node.implementation.nodes)
-    .map((node) => resolveFn(node.meta, node.version))
-    .value()
-  return Promise.all(nodes)
-    .then((nodes) => {
-      var atomics = _.filter(nodes, (node) => node.atomic)
-      var queriedNodes = _(nodes)
-        .filter((node) => !node.atomic)
-        .map(_.partial(queryCompound, _, resolveFn))
-        .value()
-
-      return Promise.all(queriedNodes)
-        .then((qNodes) => {
-          var newNode = _.cloneDeep(node)
-          _.set(newNode, 'implementation.nodes', queriedNodes.concat(atomics))
-          return newNode
-        })
-    })
+export function queryNode (node, resolveFn) {
+  return resolveFn(node.meta, node.version)
+  .then((resNode) => {
+    if (resNode.atomic) {
+      return resNode
+    } else {
+      return Promise.all(_.map(resNode.implementation.nodes, _.partial(queryNode, _, resolveFn)))
+      .then((implNodes) => {
+        resNode.implementation.nodes = implNodes
+        return resNode
+      })
+    }
+  })
 }
 
 /**
@@ -30,12 +24,12 @@ export function queryCompound (node, resolveFn) {
  * @param {any} node The node to process
  * @return {Array} An array containing all the atomics of the compound node.
  */
-export function flattenCompound (node) {
+export function flattenNode (node) {
   if (node.atomic) {
     return [node]
   } else {
     var impls = _(node.implementation.nodes)
-      .map(flattenCompound)
+      .map(flattenNode)
       .flatten()
       .value()
     return [node].concat(impls)
