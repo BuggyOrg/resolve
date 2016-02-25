@@ -4,13 +4,17 @@ import _ from 'lodash'
 /**
  * queries all information on compound nodes.
  */
-export function queryNode (node, resolveFn) {
+export function queryNode (node, resolveFn, resolveBranch = []) {
+  var branchIdx = _.findIndex(resolveBranch, (n) => n.id === node.meta)
+  if (branchIdx !== -1) {
+    return Promise.resolve(resolveBranch[branchIdx])
+  }
   return resolveFn(node.meta, node.version)
   .then((resNode) => {
     if (resNode.atomic) {
       return resNode
     } else {
-      return Promise.all(_.map(resNode.implementation.nodes, _.partial(queryNode, _, resolveFn)))
+      return Promise.all(_.map(resNode.implementation.nodes, _.partial(queryNode, _, resolveFn, resolveBranch.concat([resNode]))))
       .then((implNodes) => {
         resNode.implementation.nodes = implNodes
         return resNode

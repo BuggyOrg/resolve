@@ -61,7 +61,7 @@ describe('Resolving port graph nodes', () => {
   it('`flattenNode` flattens a compound node into its parts and the parent node', () => {
     var compoundNode = {
       id: 'test/test', implementation: {
-        nodes: [components['test/atomic']],
+        nodes: [_.cloneDeep(components['test/atomic'])],
         edges: []
       }
     }
@@ -72,8 +72,8 @@ describe('Resolving port graph nodes', () => {
   })
 
   it('`flattenNode` flattens deep', () => {
-    var cmpd = components['test/compound']
-    var atm = components['test/atomic']
+    var cmpd = _.cloneDeep(components['test/compound'])
+    var atm = _.cloneDeep(components['test/atomic'])
     cmpd.implementation.nodes[0] = atm
     var compoundNode = {
       id: 'test/test', implementation: {
@@ -107,5 +107,12 @@ describe('Resolving port graph nodes', () => {
   })
 
   it('`queryNode` resolves recursive nodes only once', () => {
+    var node = {meta: 'test/recursive', version: '0.1.0'}
+    var resSpy = sinon.spy(resolveFn)
+    return compound.queryNode(node, resSpy)
+      .then(() => {
+        expect(resSpy).to.have.been.calledWith('test/recursive', '0.1.0')
+        expect(resSpy).to.have.been.calledOnce
+      })
   })
 })

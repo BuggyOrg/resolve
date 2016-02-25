@@ -17,5 +17,15 @@
       "nodes": [{"meta": "test/atomic", "version": "0.1.0"}],
       "edges": []
     }
+  },
+  "test/recursive": {
+    "id": "test/recursive",
+    "version": "0.1.0",
+    "inputPorts": {},
+    "outputPorts": {},
+    "implementation": {
+      "nodes": [{"meta": "test/recursive", "version": "0.1.0"}],
+      "edges": []
+    }
   }
 }
