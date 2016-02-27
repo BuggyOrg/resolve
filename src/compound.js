@@ -1,20 +1,25 @@
 
 import _ from 'lodash'
+import cuid from 'cuid'
 
 /**
  * queries all information on compound nodes.
  */
 export function queryNode (node, resolveFn, resolveBranch = []) {
-  var branchIdx = _.findIndex(resolveBranch, (n) => n.id === node.meta)
+  var branchIdx = _.findIndex(resolveBranch, (n) => n.meta === node.meta)
   if (branchIdx !== -1) {
     return Promise.resolve(resolveBranch[branchIdx])
   }
   return resolveFn(node.meta, node.version)
   .then((resNode) => {
+    resNode.branch = resolveBranch
+    resNode.uniqueId = cuid()
     if (resNode.atomic) {
       return resNode
     } else {
-      return Promise.all(_.map(resNode.implementation.nodes, _.partial(queryNode, _, resolveFn, resolveBranch.concat([resNode]))))
+      var nodeIdentifier = {meta: resNode.id, version: resNode.version, uniqueId: resNode.uniqueId}
+      var queryNextNode = _.partial(queryNode, _, resolveFn, resolveBranch.concat([nodeIdentifier]))
+      return Promise.all(_.map(resNode.implementation.nodes, queryNextNode))
       .then((implNodes) => {
         resNode.implementation.nodes = implNodes
         return resNode
@@ -40,3 +45,5 @@ export function flattenNode (node) {
   }
 }
 
+export function extractEdges (node) {
+}

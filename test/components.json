@@ -18,6 +18,16 @@
       "edges": []
     }
   },
+  "test/compound2": {
+    "id": "test/compound2",
+    "version": "0.1.0",
+    "inputPorts": {},
+    "outputPorts": {},
+    "implementation": {
+      "nodes": [{"meta": "test/compound", "version": "0.1.0"}],
+      "edges": []
+    }
+  },
   "test/recursive": {
     "id": "test/recursive",
     "version": "0.1.0",

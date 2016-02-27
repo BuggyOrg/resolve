@@ -4,7 +4,7 @@ import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import sinonChai from 'sinon-chai'
 import sinon from 'sinon'
-import resolve from '../src/api'
+import resolveWith from '../src/api'
 import * as compound from '../src/compound'
 import graphlib from 'graphlib'
 import gdot from 'graphlib-dot'
@@ -35,21 +35,34 @@ const resolveFn = (name, version) => {
 }
 
 describe('Resolving port graph nodes', () => {
-  it('`resolve` should only add component information to atomics', () => {
+  var resolve = _.partial(compound.queryNode, _, resolveFn)
+
+  it('`resolveWith` should only add component information to atomics', () => {
     var atomicsGraph = readFixture('atomic.dot')
-    return resolve(atomicsGraph, resolveFn)
-    .then(resolved => {
+    return resolveWith(atomicsGraph, resolve)
+    .then((resolved) => {
       expect(resolved).to.be.an('object')
       expect(resolved.nodes()).to.have.length(1)
-      expect(resolved.node('a').component.atomic).to.be.true
+      expect(resolved.node('a').atomic).to.be.true
     })
   })
 
-  it('`resolve` fails if a component is not defined', () => {
+  it('`resolveWith` fails if a component is not defined', () => {
     var nonExistentGraph = readFixture('nonExistent.dot')
-    return expect(resolve(nonExistentGraph, resolveFn)).to.be.rejected
+    return expect(resolveWith(nonExistentGraph, resolve)).to.be.rejected
   })
 
+  it('`resolveWith` can process compound nodes', () => {
+    var cmpd = readFixture('compound.dot')
+    return resolveWith(cmpd, resolve)
+    .then((resolved) => {
+      console.log(JSON.stringify(graphlib.json.write(resolved), null, 2))
+      expect(resolved.nodes()).to.have.length(3)
+    })
+  })
+})
+
+describe('Processing compound nodes', () => {
   it('`flattenNode` flattening an atomic returns only the atomic', () => {
     var atomicNode = {id: 'test/test', atomic: true}
     var atomic = compound.flattenNode(atomicNode)
@@ -92,7 +105,7 @@ describe('Resolving port graph nodes', () => {
     var node = {meta: 'test/atomic', version: '0.1.0'}
     return compound.queryNode(node, resolveFn)
     .then(comp => {
-      expect(comp).to.deep.equal(components['test/atomic'])
+      expect(_.omit(comp, 'uniqueId')).to.deep.equal(_.merge(components['test/atomic'], {branch: []}))
     })
   })
 
@@ -114,5 +127,21 @@ describe('Resolving port graph nodes', () => {
         expect(resSpy).to.have.been.calledWith('test/recursive', '0.1.0')
         expect(resSpy).to.have.been.calledOnce
       })
+  })
+
+  it('`queryNode` contains the resolve branch in every node', () => {
+    var node = {meta: 'test/compound', version: '0.1.0'}
+    return compound.queryNode(node, resolveFn)
+      .then(compound.flattenNode)
+      .then((nodeArr) => {
+        expect(_.filter(nodeArr, (node) => node.id === 'test/compound')[0]).to.have.property('branch')
+        expect(_.filter(nodeArr, (node) => node.id === 'test/atomic')[0]).to.have.property('branch')
+        expect(_.filter(nodeArr, (node) => node.id === 'test/atomic')[0].branch).to.have.length(1)
+      })
+  })
+
+  it('`queryNode` should reject non existing components', () => {
+    var node = {meta: 'nonExisting', version: '0.1.2'}
+    return expect(compound.queryNode(node, resolveFn)).to.be.rejected
   })
 })

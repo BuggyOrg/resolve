@@ -1,19 +1,22 @@
 
 import graphlib from 'graphlib'
-import co from 'co'
 import _ from 'lodash'
+import * as compound from './compound'
 
-export default function resolve (graph, resolve) {
+export default function resolveWith (graph, resolve) {
   var graphObj = graphlib.json.write(graph)
 
-  return co(function * () {
-    return yield graphObj.nodes.map((node) => {
-      return resolve(node.value.meta)
-    })
-  }).then((nodes) => {
+  return Promise.all(graphObj.nodes.map((node) => resolve(node.value)))
+  .then((nodes) => {
+    var newNodes = _(nodes)
+        .map((node, idx) => _.merge({}, node, {name: graphObj.nodes[idx].v}))
+        .map(compound.flattenNode)
+        .flatten()
+        .map((node) => ({v: node.name || node.uniqueId, value: node}))
+        .value()
     return graphlib.json.read({
-      options: graphObj.options,
-      nodes: _.map(graphObj.nodes, (node, idx) => _.merge({}, node, {value: {component: nodes[idx]}})),
+      options: { multigraph: true, compound: true, directed: true },
+      nodes: newNodes,
       edges: graphObj.edges
     })
   })
