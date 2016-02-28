@@ -37,5 +37,33 @@
       "nodes": [{"meta": "test/recursive", "version": "0.1.0"}],
       "edges": []
     }
+  },
+  "test/edge": {
+    "id": "test/edge",
+    "version": "0.1.0",
+    "inputPorts": {
+      "in": "number"
+    },
+    "outputPorts": {
+      "out": "number"
+    },
+    "implementation": {
+      "nodes": [],
+      "edges": [{"from": "in", "to": "out"}]
+    }
+  },
+  "test/edges": {
+    "id": "test/edges",
+    "version": "0.1.0",
+    "inputPorts": {
+      "in": "number"
+    },
+    "outputPorts": {
+      "out": "number"
+    },
+    "implementation": {
+      "nodes": [{"meta": "test/edge", "name": "e", "version": "0.1.0"}],
+      "edges": [{"from": "in", "to": "e.in"}, {"from": "e.out", "to": "out"}]
+    }
   }
 }

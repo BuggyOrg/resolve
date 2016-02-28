@@ -56,7 +56,6 @@ describe('Resolving port graph nodes', () => {
     var cmpd = readFixture('compound.dot')
     return resolveWith(cmpd, resolve)
     .then((resolved) => {
-      console.log(JSON.stringify(graphlib.json.write(resolved), null, 2))
       expect(resolved.nodes()).to.have.length(3)
     })
   })
@@ -99,6 +98,19 @@ describe('Processing compound nodes', () => {
     expect(_.filter(comp, (node) => node.id === 'test/test')).to.have.length(1)
     expect(_.filter(comp, (node) => node.id === 'test/atomic')).to.have.length(1)
     expect(_.filter(comp, (node) => node.id === 'test/compound')).to.have.length(1)
+  })
+
+  it('`flattenEdges` returns the edges of a compound node', () => {
+    var cmpd = _.cloneDeep(components['test/edge'])
+    var edges = compound.flattenEdges(cmpd)
+    expect(edges).to.have.length(1)
+    expect(edges[0]).to.deep.equal({from: 'in', to: 'out'})
+  })
+
+  it('`flattenEdges` returns all edges of compound implementations', () => {
+    var cmpd = _.cloneDeep(components['test/edges'])
+    var edges = compound.flattenEdges(cmpd)
+    expect(edges).to.have.length(2)
   })
 
   it('`queryNode` resolves each inner node', () => {

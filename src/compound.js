@@ -45,5 +45,14 @@ export function flattenNode (node) {
   }
 }
 
-export function extractEdges (node) {
+export function flattenEdges (node) {
+  if (node.atomic) {
+    return []
+  } else {
+    var subEdges = _(node.implementation.nodes)
+      .map(flattenEdges)
+      .flatten()
+      .value()
+    return node.implementation.edges.concat(subEdges)
+  }
 }
