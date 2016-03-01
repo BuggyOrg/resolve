@@ -59,6 +59,15 @@ describe('Resolving port graph nodes', () => {
       expect(resolved.nodes()).to.have.length(3)
     })
   })
+
+  it('`resolveWith` can process compound nodes with edges', () => {
+    var cmpd = readFixture('compoundEdges.dot')
+    return resolveWith(cmpd, resolve)
+    .then((resolved) => {
+      expect(resolved.nodes()).to.have.length(2)
+      expect(resolved.edges()).to.have.length(3)
+    })
+  })
 })
 
 describe('Processing compound nodes', () => {
@@ -102,15 +111,22 @@ describe('Processing compound nodes', () => {
 
   it('`flattenEdges` returns the edges of a compound node', () => {
     var cmpd = _.cloneDeep(components['test/edge'])
+    cmpd.path = []
+    cmpd.branch = cmpd.id
     var edges = compound.flattenEdges(cmpd)
     expect(edges).to.have.length(1)
-    expect(edges[0]).to.deep.equal({from: 'in', to: 'out'})
+    expect(edges[0]).to.deep.equal({from: 'test/edge:in', to: 'test/edge:out'})
   })
 
   it('`flattenEdges` returns all edges of compound implementations', () => {
     var cmpd = _.cloneDeep(components['test/edges'])
+    var cmpd2 = _.cloneDeep(components['test/edge'])
+    cmpd2.name = 'e'
+    cmpd2.path = [{branchName: cmpd2.id, path: [cmpd.id]}]
+    cmpd.implementation.nodes = [cmpd2]
     var edges = compound.flattenEdges(cmpd)
-    expect(edges).to.have.length(2)
+    console.log(edges)
+    expect(edges).to.have.length(3)
   })
 
   it('`queryNode` resolves each inner node', () => {
@@ -157,3 +173,4 @@ describe('Processing compound nodes', () => {
     return expect(compound.queryNode(node, resolveFn)).to.be.rejected
   })
 })
+

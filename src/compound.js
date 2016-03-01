@@ -1,24 +1,37 @@
 
 import _ from 'lodash'
-import cuid from 'cuid'
+
+export function appendBranch (path, branch) {
+  return path.concat([branch])
+}
+
+export function pathToString (path, itemToId) {
+  return (path.length === 0)
+    ? ''
+    : path.map(itemToId).join(':')
+}
 
 /**
  * queries all information on compound nodes.
  */
-export function queryNode (node, resolveFn, resolveBranch = []) {
-  var branchIdx = _.findIndex(resolveBranch, (n) => n.meta === node.meta)
+export function queryNode (node, resolveFn, resolvePath = []) {
+  var branchIdx = _.findIndex(resolvePath, (n) => n.meta === node.meta)
   if (branchIdx !== -1) {
-    return Promise.resolve(resolveBranch[branchIdx])
+    return Promise.resolve(resolvePath[branchIdx])
   }
   return resolveFn(node.meta, node.version)
   .then((resNode) => {
-    resNode.branch = resolveBranch
-    resNode.uniqueId = cuid()
+    var branchName = (node.name) ? node.name : resNode.id
+    var nodeIdentifier = {meta: resNode.id, branch: branchName, version: resNode.version, uniqueId: resNode.uniqueId, path: resolvePath}
+    var newPath = appendBranch(resolvePath, nodeIdentifier)
+    // var branchPath = pathToString(newPath, (b) => b.branch)
+
+    resNode.path = resolvePath
+    resNode.branch = branchName
     if (resNode.atomic) {
       return resNode
     } else {
-      var nodeIdentifier = {meta: resNode.id, version: resNode.version, uniqueId: resNode.uniqueId}
-      var queryNextNode = _.partial(queryNode, _, resolveFn, resolveBranch.concat([nodeIdentifier]))
+      var queryNextNode = _.partial(queryNode, _, resolveFn, newPath)
       return Promise.all(_.map(resNode.implementation.nodes, queryNextNode))
       .then((implNodes) => {
         resNode.implementation.nodes = implNodes
@@ -53,6 +66,19 @@ export function flattenEdges (node) {
       .map(flattenEdges)
       .flatten()
       .value()
-    return node.implementation.edges.concat(subEdges)
+    var edges = _(node.implementation.edges)
+      .map((e) => {
+        var e2 = _.cloneDeep(e)
+        var pathId = pathToString(node.path, (b) => b.branch)
+        if (node.path.length !== 0) {
+          pathId += ':'
+        }
+        var nodeId = node.branch
+        e2.from = pathId + nodeId + ':' + e2.from
+        e2.to = pathId + nodeId + ':' + e2.to
+        return e2
+      })
+      .value()
+    return edges.concat(subEdges)
   }
 }

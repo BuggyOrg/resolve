@@ -1,0 +1,3 @@
+digraph {
+  b[meta="test/edges",version="0.1.0"];
+}

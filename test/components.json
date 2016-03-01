@@ -63,7 +63,7 @@
     },
     "implementation": {
       "nodes": [{"meta": "test/edge", "name": "e", "version": "0.1.0"}],
-      "edges": [{"from": "in", "to": "e.in"}, {"from": "e.out", "to": "out"}]
+      "edges": [{"from": "in", "to": "e:in"}, {"from": "e:out", "to": "out"}]
     }
   }
 }
