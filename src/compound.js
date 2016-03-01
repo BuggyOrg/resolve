@@ -24,9 +24,10 @@ export function queryNode (node, resolveFn, resolvePath = []) {
     var branchName = (node.name) ? node.name : resNode.id
     var nodeIdentifier = {meta: resNode.id, branch: branchName, version: resNode.version, uniqueId: resNode.uniqueId, path: resolvePath}
     var newPath = appendBranch(resolvePath, nodeIdentifier)
-    // var branchPath = pathToString(newPath, (b) => b.branch)
+    var branchPath = pathToString(newPath, (b) => b.branch)
 
     resNode.path = resolvePath
+    resNode.branchPath = branchPath
     resNode.branch = branchName
     if (resNode.atomic) {
       return resNode

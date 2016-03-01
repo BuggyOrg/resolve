@@ -5,20 +5,21 @@ import * as compound from './compound'
 
 var pathFromEdgeId = (edgeId) => edgeId.split(':').slice(0, -1).join(':')
 var portFromEdgeId = (edgeId) => edgeId.split(':').slice(-1)[0]
+var appendNodeName = (node, name) => _.merge({}, node, {name: name})
 
 export default function resolveWith (graph, resolve) {
   var graphObj = graphlib.json.write(graph)
 
-  return Promise.all(graphObj.nodes.map((node) => resolve(node.value)))
+  return Promise.all(graphObj.nodes.map((node) => resolve(appendNodeName(node.value, node.v))))
   .then((nodes) => {
     var newNodes = _(nodes)
-      .map((node, idx) => _.merge({}, node, {name: graphObj.nodes[idx].v}))
+      .map((node, idx) => appendNodeName(node, graphObj.nodes[idx].v))
       .map(compound.flattenNode)
       .flatten()
-      .map((node) => ({v: node.name || node.uniqueId, value: node}))
+      .map((node) => ({v: node.branchPath, value: node}))
       .value()
     var newEdges = _(nodes)
-      .map((node, idx) => _.merge({}, node, {name: graphObj.nodes[idx].v}))
+      .map((node, idx) => appendNodeName(node, graphObj.nodes[idx].v))
       .map(compound.flattenEdges)
       .flatten()
       .map((edge) => ({

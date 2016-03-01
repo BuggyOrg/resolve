@@ -122,10 +122,12 @@ describe('Processing compound nodes', () => {
     var cmpd = _.cloneDeep(components['test/edges'])
     var cmpd2 = _.cloneDeep(components['test/edge'])
     cmpd2.name = 'e'
-    cmpd2.path = [{branchName: cmpd2.id, path: [cmpd.id]}]
+    cmpd2.branch = 'e'
+    cmpd2.path = [{branch: cmpd2.id, path: [cmpd.id]}]
     cmpd.implementation.nodes = [cmpd2]
+    cmpd.branch = 'test/edges'
+    cmpd.path = []
     var edges = compound.flattenEdges(cmpd)
-    console.log(edges)
     expect(edges).to.have.length(3)
   })
 
@@ -133,7 +135,8 @@ describe('Processing compound nodes', () => {
     var node = {meta: 'test/atomic', version: '0.1.0'}
     return compound.queryNode(node, resolveFn)
     .then(comp => {
-      expect(_.omit(comp, 'uniqueId')).to.deep.equal(_.merge(components['test/atomic'], {branch: []}))
+      expect(_.omit(comp, 'uniqueId')).to.deep.equal(
+        _.merge(components['test/atomic'], {branch: 'test/atomic', path: [], branchPath: 'test/atomic'}))
     })
   })
 
@@ -163,8 +166,10 @@ describe('Processing compound nodes', () => {
       .then(compound.flattenNode)
       .then((nodeArr) => {
         expect(_.filter(nodeArr, (node) => node.id === 'test/compound')[0]).to.have.property('branch')
+        expect(_.filter(nodeArr, (node) => node.id === 'test/compound')[0]).to.have.property('path')
         expect(_.filter(nodeArr, (node) => node.id === 'test/atomic')[0]).to.have.property('branch')
-        expect(_.filter(nodeArr, (node) => node.id === 'test/atomic')[0].branch).to.have.length(1)
+        expect(_.filter(nodeArr, (node) => node.id === 'test/atomic')[0]).to.have.property('path')
+        expect(_.filter(nodeArr, (node) => node.id === 'test/atomic')[0].path).to.have.length(1)
       })
   })
 
@@ -173,4 +178,3 @@ describe('Processing compound nodes', () => {
     return expect(compound.queryNode(node, resolveFn)).to.be.rejected
   })
 })
-
