@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Algorithms to convert a program descriptor into a full graph representation.",
   "main": "lib/api.js",
+  "bin": {
+    "bres": "lib/cli.js"
+  },
   "directories": {
     "test": "test"
   },
