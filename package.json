@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "node node_modules/standard/bin/cmd.js src/**/*.js && node_modules/mocha/bin/mocha --compilers js:babel-register --require babel-polyfill",
-    "build": "babel src -d lib"
+    "build": "babel src -d lib",
+    "prepublish": "babel src -d lib"
   },
   "keywords": [
     "Buggy"
