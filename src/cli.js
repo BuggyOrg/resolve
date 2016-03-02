@@ -6,18 +6,13 @@ import fs from 'fs'
 import graphlib from 'graphlib'
 import connect from '@buggyorg/component-library'
 import getStdin from 'get-stdin'
-import chalk from 'chalk'
 import resolve from './api'
+import path from 'path'
+import * as compound from './compound'
 import _ from 'lodash'
 
 var server = ''
 var defaultElastic = ' Defaults to BUGGY_COMPONENT_LIBRARY_HOST'
-
-const log = function (...args) {
-  if (!program.silent) {
-    console.log.call(console.log, ...args)
-  }
-}
 
 if (process.env.BUGGY_COMPONENT_LIBRARY_HOST) {
   server = process.env.BUGGY_COMPONENT_LIBRARY_HOST
@@ -52,7 +47,7 @@ function stdinOrFile (graphfile) {
 }
 
 program
-  .version(JSON.parse(fs.readFileSync(__dirname + '/../package.json'))['version'])
+  .version(JSON.parse(fs.readFileSync(path.join(__dirname, '/../package.json')))['version'])
   .option('-h, --host <host>', 'The library elastic server to connect to.' + defaultElastic, String, server)
   .option('-n, --nice', 'Pretty print all JSON output')
   .option('-f, --file', '(Optional) The graphfile to resolve')
@@ -61,17 +56,18 @@ program
 
 stdinOrFile(program.file)
   .then((contents) => {
-    console.log(contents)
-    return graphlib.json.read(contents)
+    return graphlib.json.read(JSON.parse(contents))
   })
   .then((graph) => {
     var client = connect(program.host)
-    return resolve(graph, client.get)
+    var resolveFn = _.partial(compound.queryNode, _, client.get)
+    return resolve(graph, resolveFn)
   })
   .then((resGraph) => {
     printJSON(graphlib.json.write(resGraph))
   })
   .catch((err) => {
-    console.error(err)
+    console.error(err.message)
+    console.error(err.stack)
     process.exit(1)
   })

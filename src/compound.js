@@ -29,6 +29,9 @@ export function queryNode (node, resolveFn, resolvePath = []) {
     resNode.path = resolvePath
     resNode.branchPath = branchPath
     resNode.branch = branchName
+    if (node.values) {
+      resNode.values = node.values
+    }
     if (resNode.atomic) {
       return resNode
     } else {

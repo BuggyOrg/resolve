@@ -177,4 +177,15 @@ describe('Processing compound nodes', () => {
     var node = {meta: 'nonExisting', version: '0.1.2'}
     return expect(compound.queryNode(node, resolveFn)).to.be.rejected
   })
+
+  it('`queryNode` applies values to ports', () => {
+    var node = {meta: 'test/edge', version: '0.1.0', values: [{value: 'a', port: 'in'}]}
+    return compound.queryNode(node, resolveFn)
+      .then((node) => {
+        expect(node).to.have.property('values')
+        expect(node.values).to.be.an('array')
+        expect(node.values).to.have.length(1)
+        expect(node.values[0]).to.deep.equal({value: 'a', port: 'in'})
+      })
+  })
 })
