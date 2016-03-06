@@ -7,7 +7,11 @@ var pathFromEdgeId = (edgeId) => edgeId.split(':').slice(0, -1).join(':')
 var portFromEdgeId = (edgeId) => edgeId.split(':').slice(-1)[0]
 var appendNodeName = (node, name) => _.merge({}, node, {name: name})
 
-export default function resolveWith (graph, resolve) {
+export function resolve (graph, resolver) {
+  return resolveWith(graph, _.partial(compound.queryNode, _, resolver))
+}
+
+export function resolveWith (graph, resolve) {
   var graphObj = graphlib.json.write(graph)
 
   return Promise.all(graphObj.nodes.map((node) => resolve(appendNodeName(node.value, node.v))))

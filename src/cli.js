@@ -6,10 +6,8 @@ import fs from 'fs'
 import graphlib from 'graphlib'
 import connect from '@buggyorg/component-library'
 import getStdin from 'get-stdin'
-import resolve from './api'
+import {resolve} from './api'
 import path from 'path'
-import * as compound from './compound'
-import _ from 'lodash'
 
 var server = ''
 var defaultElastic = ' Defaults to BUGGY_COMPONENT_LIBRARY_HOST'
@@ -60,8 +58,7 @@ stdinOrFile(program.file)
   })
   .then((graph) => {
     var client = connect(program.host)
-    var resolveFn = _.partial(compound.queryNode, _, client.get)
-    return resolve(graph, resolveFn)
+    return resolve(graph, client.get)
   })
   .then((resGraph) => {
     printJSON(graphlib.json.write(resGraph))
