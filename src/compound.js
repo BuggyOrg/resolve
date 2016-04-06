@@ -27,6 +27,9 @@ export function queryNode (node, resolveFn, resolvePath = []) {
     var branchPath = pathToString(newPath, (b) => b.branch)
 
     resNode.path = resolvePath
+    if (resolvePath.length !== 0) {
+      resNode.parent = _.last(resNode.path).branch
+    }
     resNode.branchPath = branchPath
     resNode.branch = branchName
     if (node.values) {
