@@ -68,6 +68,14 @@ describe('Resolving port graph nodes', () => {
       expect(resolved.edges()).to.have.length(3)
     })
   })
+
+  it('`resolveWith` can process recursive compound nodes', () => {
+    var cmpd = readFixture('recurse.dot')
+    return resolveWith(cmpd, resolve)
+    .then((resolved) => {
+      expect(resolved.nodes()).to.have.length(3)
+    })
+  })
 })
 
 describe('Processing compound nodes', () => {
@@ -150,13 +158,13 @@ describe('Processing compound nodes', () => {
       })
   })
 
-  it('`queryNode` resolves recursive nodes only once', () => {
+  it('`queryNode` terminates on recursive nodes', () => {
     var node = {meta: 'test/recursive', version: '0.1.0'}
     var resSpy = sinon.spy(resolveFn)
     return compound.queryNode(node, resSpy)
       .then(() => {
         expect(resSpy).to.have.been.calledWith('test/recursive', '0.1.0')
-        expect(resSpy).to.have.been.calledOnce
+        expect(resSpy).to.have.been.calledThrice
       })
   })
 
@@ -189,3 +197,4 @@ describe('Processing compound nodes', () => {
       })
   })
 })
+

@@ -34,8 +34,18 @@
     "inputPorts": {},
     "outputPorts": {},
     "implementation": {
-      "nodes": [{"meta": "test/recursive", "version": "0.1.0"}],
+      "nodes": [{"meta": "test/recursive", "version": "0.1.0","name":"r2"}],
       "edges": []
+    }
+  },
+  "test/recursive2": {
+    "id": "test/recursive",
+    "version": "0.1.0",
+    "inputPorts": {"a": "int"},
+    "outputPorts": {"b": "int"},
+    "implementation": {
+      "nodes": [{"meta": "test/recursive2", "version": "0.1.0", "name": "rec"}],
+      "edges": [{"from": "a", "to": "rec:a"}, {"from": "rec:a", "to": "b"}]
     }
   },
   "test/edge": {

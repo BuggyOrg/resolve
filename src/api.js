@@ -8,13 +8,18 @@ var portFromEdgeId = (edgeId) => edgeId.split(':').slice(-1)[0]
 var appendNodeName = (node, name) => _.merge({}, node, {name: name})
 
 export function resolve (graph, resolver) {
-  return resolveWith(graph, _.partial(compound.queryNode, _, resolver))
+  var resolved = {}
+  return resolveWith(graph, _.partial(compound.queryNode, _, resolver, resolved))
 }
 
 export function resolveWith (graph, resolve) {
   var graphObj = graphlib.json.write(graph)
 
-  return Promise.all(graphObj.nodes.map((node) => resolve(appendNodeName(node.value, node.v))))
+  return Promise.all(graphObj.nodes.map((node) => {
+    return resolve(appendNodeName(node.value, node.v)).catch(() => {
+      throw new Error(`Cannot resolve ${node.v} with id ${node.value.id} in version ${node.value.version}`)
+    })
+  }))
   .then((nodes) => {
     var newNodes = _(nodes)
       .map((node, idx) => appendNodeName(node, graphObj.nodes[idx].v))

@@ -14,13 +14,14 @@ export function pathToString (path, itemToId) {
 /**
  * queries all information on compound nodes.
  */
-export function queryNode (node, resolveFn, resolvePath = []) {
-  var branchIdx = _.findIndex(resolvePath, (n) => n.meta === node.meta)
-  if (branchIdx !== -1) {
-    return Promise.resolve(resolvePath[branchIdx])
-  }
+export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
+/*  if (node.name && _.has(resolved, node.name)) {
+    console.log('already has ' + node.name)
+    return Promise.resolve(_.merge({}, _.omit(resolved[node.name], 'implementation'), {recursive: true}))
+  }*/
   return resolveFn(node.meta, node.version)
   .then((resNode) => {
+    resolved[(node.name) ? node.name : node.meta] = resNode
     var branchName = (node.name) ? node.name : resNode.id
     var nodeIdentifier = {meta: resNode.id, branch: branchName, version: resNode.version, uniqueId: resNode.uniqueId, path: resolvePath}
     var newPath = appendBranch(resolvePath, nodeIdentifier)
@@ -35,10 +36,14 @@ export function queryNode (node, resolveFn, resolvePath = []) {
     if (node.values) {
       resNode.values = node.values
     }
-    if (resNode.atomic) {
+    var branchIdx = _.findIndex(resolvePath, (n) => n.meta === node.meta && n.branch === node.name)
+    if (branchIdx !== -1) {
+      resNode.recursive = true
+    }
+    if (resNode.atomic || resNode.recursive) {
       return resNode
     } else {
-      var queryNextNode = _.partial(queryNode, _, resolveFn, newPath)
+      var queryNextNode = _.partial(queryNode, _, resolveFn, resolved, newPath)
       return Promise.all(_.map(resNode.implementation.nodes, queryNextNode))
       .then((implNodes) => {
         resNode.implementation.nodes = implNodes
@@ -54,7 +59,7 @@ export function queryNode (node, resolveFn, resolvePath = []) {
  * @return {Array} An array containing all the atomics of the compound node.
  */
 export function flattenNode (node) {
-  if (node.atomic) {
+  if (node.atomic || node.recursive) {
     return [node]
   } else {
     var impls = _(node.implementation.nodes)
@@ -66,7 +71,7 @@ export function flattenNode (node) {
 }
 
 export function flattenEdges (node) {
-  if (node.atomic) {
+  if (node.atomic || node.recursive) {
     return []
   } else {
     var subEdges = _(node.implementation.nodes)
