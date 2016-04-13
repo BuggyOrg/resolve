@@ -15,10 +15,6 @@ export function pathToString (path, itemToId) {
  * queries all information on compound nodes.
  */
 export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
-/*  if (node.name && _.has(resolved, node.name)) {
-    console.log('already has ' + node.name)
-    return Promise.resolve(_.merge({}, _.omit(resolved[node.name], 'implementation'), {recursive: true}))
-  }*/
   return resolveFn(node.meta, node.version)
   .then((resNode) => {
     resolved[(node.name) ? node.name : node.meta] = resNode
@@ -28,6 +24,7 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
     var branchPath = pathToString(newPath, (b) => b.branch)
 
     resNode.path = resolvePath
+    resNode.params = node.params
     if (resolvePath.length !== 0) {
       resNode.parent = pathToString(resolvePath, (b) => b.branch)
     }
