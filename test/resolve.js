@@ -143,7 +143,7 @@ describe('Processing compound nodes', () => {
     var node = {meta: 'test/atomic', version: '0.1.0'}
     return compound.queryNode(node, resolveFn)
     .then(comp => {
-      expect(_.omit(comp, 'uniqueId')).to.deep.equal(
+      expect(_.omit(comp, ['uniqueId', 'params'])).to.deep.equal(
         _.merge(components['test/atomic'], {branch: 'test/atomic', path: [], branchPath: 'test/atomic'}))
     })
   })
