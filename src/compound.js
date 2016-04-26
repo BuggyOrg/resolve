@@ -25,6 +25,7 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
 
     resNode.path = resolvePath
     resNode.params = node.params
+    resNode.typeHint = node.typeHint
     if (resolvePath.length !== 0) {
       resNode.parent = pathToString(resolvePath, (b) => b.branch)
     }
