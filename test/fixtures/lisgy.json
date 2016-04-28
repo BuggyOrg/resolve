@@ -1,0 +1,60 @@
+{
+  "code": "(defcop math/less [isLess than] [value])(defcop math/add [s1 s2] [sum])(def le math/less)(def + math/add)(defco test [a b] [:le (le a b) :ad (+ a b)]) (test 10 (+ 3 20))",
+  "nodes": [
+    {
+      "v": "test_2",
+      "value": {
+        "name": "test_2",
+        "id": "test",
+        "inputPorts": {
+          "a": "generic",
+          "b": "generic"
+        },
+        "outputPorts": {
+          "le": "generic",
+          "ad": "generic"
+        },
+        "implementation": {
+          "nodes": [
+            {
+              "meta": "test/atomic",
+              "name": "le_0"
+            },
+            {
+              "meta": "test/atomic",
+              "name": "+_1"
+            }
+          ],
+          "edges": [
+            {
+              "from": "a",
+              "to": "le_0:isLess"
+            },
+            {
+              "from": "b",
+              "to": "le_0:than"
+            },
+            {
+              "from": "le_0:value",
+              "to": "le"
+            },
+            {
+              "from": "a",
+              "to": "+_1:s1"
+            },
+            {
+              "from": "b",
+              "to": "+_1:s2"
+            },
+            {
+              "from": "+_1:sum",
+              "to": "ad"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "edges": [
+  ]
+}

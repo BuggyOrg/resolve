@@ -33,7 +33,7 @@
     "standard": "^6.0.7"
   },
   "dependencies": {
-    "@buggyorg/component-library": "^0.2.2",
+    "@buggyorg/component-library": "^0.3.4",
     "co": "^4.6.0",
     "cuid": "^1.3.8",
     "graphlib": "^2.1.0",

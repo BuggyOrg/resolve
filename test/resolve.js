@@ -76,6 +76,15 @@ describe('Resolving port graph nodes', () => {
       expect(resolved.nodes()).to.have.length(3)
     })
   })
+
+  it('`resolveWith` can process already resolved parts', () => {
+    var cmpd = readFixture('lisgy.json')
+    return resolveWith(cmpd, resolve)
+    .then((resolved) => {
+      console.log(JSON.stringify(graphlib.json.write(resolved), null, 2))
+      expect(resolved.nodes()).to.have.length(3)
+    })
+  })
 })
 
 describe('Processing compound nodes', () => {

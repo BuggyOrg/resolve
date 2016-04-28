@@ -16,8 +16,8 @@ export function resolveWith (graph, resolve) {
   var graphObj = graphlib.json.write(graph)
 
   return Promise.all(graphObj.nodes.map((node) => {
-    return resolve(appendNodeName(node.value, node.v)).catch(() => {
-      throw new Error(`Cannot resolve ${node.v} with id ${node.value.id} in version ${node.value.version}`)
+    return resolve(appendNodeName(node.value, node.v)).catch((err) => {
+      throw new Error(`Cannot resolve ${node.v} with id ${node.value.id} in version ${node.value.version}\n${err}`)
     })
   }))
   .then((nodes) => {

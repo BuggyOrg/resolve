@@ -15,7 +15,13 @@ export function pathToString (path, itemToId) {
  * queries all information on compound nodes.
  */
 export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
-  return resolveFn(node.meta, node.version)
+  var resPromise = null
+  if (node.id) {
+    resPromise = Promise.resolve(node)
+  } else {
+    resPromise = resolveFn(node.meta, node.version)
+  }
+  return resPromise
   .then((resNode) => {
     resolved[(node.name) ? node.name : node.meta] = resNode
     var branchName = (node.name) ? node.name : resNode.id
