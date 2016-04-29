@@ -81,9 +81,16 @@ describe('Resolving port graph nodes', () => {
     var cmpd = readFixture('lisgy.json')
     return resolveWith(cmpd, resolve)
     .then((resolved) => {
-      console.log(JSON.stringify(graphlib.json.write(resolved), null, 2))
       expect(resolved.nodes()).to.have.length(3)
     })
+  })
+
+  it('can handle multiple in ports', () => {
+    var mip = readFixture('multiple_in_ports.json')
+    return resolveWith(mip, resolve)
+      .then((resolve) => {
+        expect(resolve.edges()).to.have.length(6)
+      })
   })
 })
 

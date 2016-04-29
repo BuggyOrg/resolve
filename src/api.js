@@ -37,7 +37,8 @@ export function resolveWith (graph, resolve) {
         value: {
           outPort: portFromEdgeId(edge.from),
           inPort: portFromEdgeId(edge.to)
-        }
+        },
+        name: edge.from + '→' + edge.to
       }))
       .value()
     return graphlib.json.read({
