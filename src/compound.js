@@ -48,7 +48,7 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
     if (resNode.atomic || resNode.recursive) {
       return resNode
     } else {
-      resNode.recursive = (isRecursive !== undefined)
+      resNode.recursesTo = isRecursive
       var queryNextNode = _.partial(queryNode, _, resolveFn, resolved, newPath)
       return Promise.all(_.map(resNode.implementation.nodes, queryNextNode))
       .then((implNodes) => {

@@ -26,6 +26,7 @@ export function resolveWith (graph, resolve) {
       .map(compound.flattenNode)
       .flatten()
       .map((node) => ({v: node.branchPath, value: node, parent: node.parent || undefined}))
+      .map((node) => _.merge(node, {value: {recursive: node.value.recursive || node.value.recursesTo !== undefined}}))
       .value()
     var newEdges = _(nodes)
       .map((node, idx) => appendNodeName(node, graphObj.nodes[idx].v))
