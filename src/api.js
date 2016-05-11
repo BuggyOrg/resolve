@@ -16,7 +16,7 @@ export function resolveWith (graph, resolve) {
 
   var resolved = _(graphObj.nodes)
     .reject((n) => _.has(n.value, 'meta'))
-    .map((n) => [n.value.name, _.merge({}, n, {value: {externalComponent: true}})])
+    .map((n) => [n.value.id, _.merge({}, n.value, {externalComponent: true})])
     .fromPairs()
     .value()
 
