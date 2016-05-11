@@ -93,7 +93,7 @@ describe('Resolving port graph nodes', () => {
       })
   })
 
-  it.only('can use components defined in the graph', () => {
+  it('can use components defined in the graph', () => {
     var mip = readFixture('componentDefinition.json')
     return expect(resolveWith(mip, resolve)).to.be.fulfilled
   })
