@@ -1,0 +1,39 @@
+{
+  "options": {
+    "directed": true,
+    "multigraph": false,
+    "compound": true
+  },
+  "nodes": [
+    {
+      "v": "test_1",
+      "value": {
+        "name": "test_1",
+        "id": "test_1",
+        "inputPorts": {},
+        "outputPorts": {},
+        "atomic": true
+      }
+    },
+    {
+      "v": "test_2",
+      "value": {
+        "name": "test_2",
+        "id": "test_2",
+        "inputPorts": {},
+        "outputPorts": {},
+        "implementation": {
+          "nodes": [
+            {
+              "meta": "test_1",
+              "name": "t"
+            }
+          ],
+          "edges": []
+        }
+      }
+    }
+  ],
+  "edges": [
+  ]
+}

@@ -16,13 +16,21 @@ export function pathToString (path, itemToId) {
  */
 export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
   var resPromise = null
+  // console.log(_.keys(resolved), node)
   if (node.id) {
     resPromise = Promise.resolve(node)
+  } else if (!node.meta && resolved[node.name]) {
+    // Caution: no resolve over meta-id. If the node contains parameters it is important to not lose them
+    // or use params of another node.
+    console.error('using resolved', node.name)
+    resPromise = Promise.resolve(resolved[node.name])
   } else {
+    console.error('not existent', node)
     resPromise = resolveFn(node.meta, node.version)
   }
   return resPromise
   .then((resNode) => {
+    console.error((node.name) ? node.name : node.meta)
     resolved[(node.name) ? node.name : node.meta] = resNode
     var branchName = (node.name) ? node.name : resNode.id
     var nodeIdentifier = {meta: resNode.id, branch: branchName, version: resNode.version, uniqueId: resNode.uniqueId, path: resolvePath}

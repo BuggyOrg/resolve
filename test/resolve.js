@@ -92,6 +92,11 @@ describe('Resolving port graph nodes', () => {
         expect(resolve.edges()).to.have.length(6)
       })
   })
+
+  it.only('can use components defined in the graph', () => {
+    var mip = readFixture('componentDefinition.json')
+    return expect(resolveWith(mip, resolve)).to.be.fulfilled
+  })
 })
 
 describe('Processing compound nodes', () => {
