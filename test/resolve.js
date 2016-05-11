@@ -97,6 +97,11 @@ describe('Resolving port graph nodes', () => {
     var mip = readFixture('componentDefinition.json')
     return expect(resolveWith(mip, resolve)).to.be.fulfilled
   })
+
+  it('can resolve meta from new component', () => {
+    var lisgy = readFixture('lisgy2NewComps.json')
+    return expect(resolveWith(lisgy, resolve)).to.be.fulfilled
+  })
 })
 
 describe('Processing compound nodes', () => {
