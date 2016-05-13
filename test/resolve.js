@@ -33,6 +33,23 @@ const resolveFn = (name, version) => {
     return Promise.reject('Component "' + name + '" undefined')
   }
 }
+const stringifyCheck = (json) => {
+  var cache = []
+  var check = function (key, value) {
+    if (typeof value === 'object' && value !== null) {
+      if (cache.indexOf(value) !== -1) {
+        // Circular reference found, discard key
+        console.error('circular', value)
+        return
+      }
+      // Store value in our collection
+      cache.push(value)
+    }
+    return value
+  }
+
+  return JSON.stringify(json, null, 2)
+}
 
 describe('Resolving port graph nodes', () => {
   var resolve = _.partial(compound.queryNode, _, resolveFn)
@@ -73,6 +90,7 @@ describe('Resolving port graph nodes', () => {
     var cmpd = readFixture('recurse.dot')
     return resolveWith(cmpd, resolve)
     .then((resolved) => {
+      stringifyCheck(graphlib.json.write(resolved))
       expect(resolved.nodes()).to.have.length(3)
     })
   })
@@ -101,6 +119,15 @@ describe('Resolving port graph nodes', () => {
   it('can resolve meta from new component', () => {
     var lisgy = readFixture('lisgy2NewComps.json')
     return expect(resolveWith(lisgy, resolve)).to.be.fulfilled
+  })
+
+  it('can resolve new recursive component', () => {
+    var cmpd = readFixture('lisgyRec.json')
+    return resolveWith(cmpd, resolve)
+    .then((resolved) => {
+      expect(resolved.nodes()).to.have.length(4)
+      stringifyCheck(graphlib.json.write(resolved))
+    })
   })
 })
 

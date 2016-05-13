@@ -1,0 +1,53 @@
+{
+  "nodes": [
+    {
+      "v": "defco_rec",
+      "value": {
+        "id": "rec",
+        "inputPorts": {
+          "a": "generic",
+          "b": "generic"
+        },
+        "outputPorts": {
+          "value": "generic"
+        },
+        "implementation": {
+          "nodes": [
+            {
+              "meta": "test/atomic",
+              "name": "add_0"
+            },
+            {
+              "meta": "rec",
+              "name": "rec_1"
+            }
+          ],
+          "edges": [
+            {
+              "from": "a",
+              "to": "add_0:s1"
+            },
+            {
+              "from": "a",
+              "to": "rec_1:a"
+            },
+            {
+              "from": "b",
+              "to": "rec_1:b"
+            },
+            {
+              "from": "rec_1:value",
+              "to": "add_0:s2"
+            },
+            {
+              "from": "add_0:sum",
+              "to": "value"
+            }
+          ]
+        },
+        "name": "defco_rec"
+      }
+    }
+  ],
+  "edges": []
+}
