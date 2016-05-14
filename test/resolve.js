@@ -91,7 +91,7 @@ describe('Resolving port graph nodes', () => {
     return resolveWith(cmpd, resolve)
     .then((resolved) => {
       stringifyCheck(graphlib.json.write(resolved))
-      expect(resolved.nodes()).to.have.length(3)
+      expect(resolved.nodes()).to.have.length(2)
     })
   })
 
@@ -125,7 +125,7 @@ describe('Resolving port graph nodes', () => {
     var cmpd = readFixture('lisgyRec.json')
     return resolveWith(cmpd, resolve)
     .then((resolved) => {
-      expect(resolved.nodes()).to.have.length(4)
+      expect(resolved.nodes()).to.have.length(3)
       stringifyCheck(graphlib.json.write(resolved))
     })
   })
@@ -217,7 +217,7 @@ describe('Processing compound nodes', () => {
     return compound.queryNode(node, resSpy)
       .then(() => {
         expect(resSpy).to.have.been.calledWith('test/recursive', '0.1.0')
-        expect(resSpy).to.have.been.calledThrice
+        expect(resSpy).to.have.been.calledTwice
       })
   })
 
