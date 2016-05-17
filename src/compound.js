@@ -25,7 +25,7 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
   } else if (resolved[node.meta] && resolved[node.meta].externalComponent) {
     // Caution: no resolve over meta-id. If the node contains parameters it is important to not lose them
     // or use params of another node.
-    resPromise = Promise.resolve(resolved[node.meta])
+    resPromise = Promise.resolve(_.clone(resolved[node.meta]))
   } else {
     resPromise = resolveFn(node.meta, node.version)
   }

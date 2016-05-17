@@ -1,0 +1,219 @@
+{
+  "code": "(defco ack (m n)\n  (:result (logic/mux\n    (math/add n 1) ; m = 0\n    (logic/mux\n      (ack (math/add m -1) 1) ; m > 0, n = 0\n      (ack (math/add m -1) (ack m (math/add n -1))) ; m > 0, n > 0\n      (logic/equal n 0))\n    (logic/equal m 0))))",
+  "nodes": [
+    {
+      "v": "defco_ack",
+      "value": {
+        "id": "ack",
+        "inputPorts": {
+          "m": "generic",
+          "n": "generic"
+        },
+        "outputPorts": {
+          "result": "generic"
+        },
+        "implementation": {
+          "nodes": [
+            {
+              "meta": "test/atomic",
+              "name": "mux_0"
+            },
+            {
+              "meta": "test/atomic",
+              "name": "add_1"
+            },
+            {
+              "meta": "test/atomic",
+              "name": "const(1)_2",
+              "params": {
+                "value": 1
+              }
+            },
+            {
+              "meta": "test/atomic",
+              "name": "mux_3"
+            },
+            {
+              "meta": "ack",
+              "name": "ack_4"
+            },
+            {
+              "meta": "test/atomic",
+              "name": "add_5"
+            },
+            {
+              "meta": "test/atomic",
+              "name": "const(-1)_6",
+              "params": {
+                "value": -1
+              }
+            },
+            {
+              "meta": "test/atomic",
+              "name": "const(1)_7",
+              "params": {
+                "value": 1
+              }
+            },
+            {
+              "meta": "ack",
+              "name": "ack_8"
+            },
+            {
+              "meta": "test/atomic",
+              "name": "add_9"
+            },
+            {
+              "meta": "test/atomic",
+              "name": "const(-1)_10",
+              "params": {
+                "value": -1
+              }
+            },
+            {
+              "meta": "ack",
+              "name": "ack_11"
+            },
+            {
+              "meta": "test/atomic",
+              "name": "add_12"
+            },
+            {
+              "meta": "test/atomic",
+              "name": "const(-1)_13",
+              "params": {
+                "value": -1
+              }
+            },
+            {
+              "meta": "test/atomic",
+              "name": "equal_14"
+            },
+            {
+              "meta": "test/atomic",
+              "name": "const(0)_15",
+              "params": {
+                "value": 0
+              }
+            },
+            {
+              "meta": "test/atomic",
+              "name": "equal_16"
+            },
+            {
+              "meta": "test/atomic",
+              "name": "const(0)_17",
+              "params": {
+                "value": 0
+              }
+            }
+          ],
+          "edges": [
+            {
+              "from": "n",
+              "to": "add_1:s1"
+            },
+            {
+              "from": "const(1)_2:output",
+              "to": "add_1:s2"
+            },
+            {
+              "from": "add_1:sum",
+              "to": "mux_0:input1"
+            },
+            {
+              "from": "m",
+              "to": "add_5:s1"
+            },
+            {
+              "from": "const(-1)_6:output",
+              "to": "add_5:s2"
+            },
+            {
+              "from": "add_5:sum",
+              "to": "ack_4:m"
+            },
+            {
+              "from": "const(1)_7:output",
+              "to": "ack_4:n"
+            },
+            {
+              "from": "ack_4:result",
+              "to": "mux_3:input1"
+            },
+            {
+              "from": "m",
+              "to": "add_9:s1"
+            },
+            {
+              "from": "const(-1)_10:output",
+              "to": "add_9:s2"
+            },
+            {
+              "from": "add_9:sum",
+              "to": "ack_8:m"
+            },
+            {
+              "from": "m",
+              "to": "ack_11:m"
+            },
+            {
+              "from": "n",
+              "to": "add_12:s1"
+            },
+            {
+              "from": "const(-1)_13:output",
+              "to": "add_12:s2"
+            },
+            {
+              "from": "add_12:sum",
+              "to": "ack_11:n"
+            },
+            {
+              "from": "ack_11:result",
+              "to": "ack_8:n"
+            },
+            {
+              "from": "ack_8:result",
+              "to": "mux_3:input2"
+            },
+            {
+              "from": "n",
+              "to": "equal_14:i1"
+            },
+            {
+              "from": "const(0)_15:output",
+              "to": "equal_14:i2"
+            },
+            {
+              "from": "equal_14:eq",
+              "to": "mux_3:control"
+            },
+            {
+              "from": "mux_3:output",
+              "to": "mux_0:input2"
+            },
+            {
+              "from": "m",
+              "to": "equal_16:i1"
+            },
+            {
+              "from": "const(0)_17:output",
+              "to": "equal_16:i2"
+            },
+            {
+              "from": "equal_16:eq",
+              "to": "mux_0:control"
+            },
+            {
+              "from": "mux_0:output",
+              "to": "result"
+            }
+          ]
+        },
+        "name": "defco_ack"
+      }
+    }
+  ],
+  "edges": []
+}

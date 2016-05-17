@@ -33,6 +33,10 @@ export function resolveWith (graph, resolve) {
       .map((node) => ({v: node.branchPath, value: node, parent: node.parent || undefined}))
       .map((node) => _.merge(node, {value: {recursive: node.value.recursive || node.value.recursesTo !== undefined}}))
       .value()
+    /* console.log(_(nodes)
+      .map((node, idx) => appendNodeName(node, graphObj.nodes[idx].v))
+      .map(compound.flattenNode)
+      .flatten().value())*/
     var newEdges = _(nodes)
       .map((node, idx) => appendNodeName(node, graphObj.nodes[idx].v))
       .map(compound.flattenEdges)

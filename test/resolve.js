@@ -129,6 +129,20 @@ describe('Resolving port graph nodes', () => {
       stringifyCheck(graphlib.json.write(resolved))
     })
   })
+
+  it('can resolve an ackermann like function', () => {
+    var cmpd = readFixture('ack.json')
+    return resolveWith(cmpd, resolve)
+    .then((resolved) => {
+      expect(resolved.node('defco_ack:ack_4')).to.be.ok
+      expect(resolved.node('defco_ack:ack_4').inputPorts).to.be.ok
+      expect(resolved.node('defco_ack:ack_4').outputPorts).to.be.ok
+      expect(resolved.node('defco_ack:ack_8')).to.be.ok
+      expect(resolved.node('defco_ack:ack_8').inputPorts).to.be.ok
+      expect(resolved.node('defco_ack:ack_8').outputPorts).to.be.ok
+      stringifyCheck(graphlib.json.write(resolved))
+    })
+  })
 })
 
 describe('Processing compound nodes', () => {
