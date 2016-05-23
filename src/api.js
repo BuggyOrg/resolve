@@ -30,6 +30,7 @@ export function resolveWith (graph, resolve) {
       .map((node, idx) => appendNodeName(node, graphObj.nodes[idx].v))
       .map(compound.flattenNode)
       .flatten()
+      .reject((node) => node.branchPath.indexOf('defco_') === 0)
       .map((node) => ({v: node.branchPath, value: node, parent: node.parent || undefined}))
       .map((node) => _.merge(node, {value: {recursive: node.value.recursive || node.value.recursesTo !== undefined}}))
       .value()
@@ -41,6 +42,7 @@ export function resolveWith (graph, resolve) {
       .map((node, idx) => appendNodeName(node, graphObj.nodes[idx].v))
       .map(compound.flattenEdges)
       .flatten()
+      .reject((edge) => edge.from.indexOf('defco_') === 0 || edge.to.indexOf('defco_') === 0)
       .map((edge) => ({
         v: pathFromEdgeId(edge.from),
         w: pathFromEdgeId(edge.to),

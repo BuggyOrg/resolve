@@ -25,7 +25,7 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
   } else if (resolved[node.meta] && resolved[node.meta].externalComponent) {
     // Caution: no resolve over meta-id. If the node contains parameters it is important to not lose them
     // or use params of another node.
-    resPromise = Promise.resolve(_.clone(_.omit(resolved[node.meta], 'implementation')))
+    resPromise = Promise.resolve(_.cloneDeep(resolved[node.meta]))
   } else {
     resPromise = resolveFn(node.meta, node.version)
   }
@@ -67,10 +67,8 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
       return resNode
     } else {
       var queryNextNode = _.partial(queryNode, _, resolveFn, resolved, newPath)
-      var implementations = (resNode.implementation) ? (resNode.implementation.nodes || []) : []
-      return Promise.all(_.map(implementations, queryNextNode))
+      return Promise.all(_.map(resNode.implementation.nodes, queryNextNode))
       .then((implNodes) => {
-        resNode.implementation = resNode.implementation || {}
         resNode.implementation.nodes = implNodes
         return resNode
       })

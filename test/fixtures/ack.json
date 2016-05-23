@@ -2,7 +2,7 @@
   "code": "(defco ack (m n)\n  (:result (logic/mux\n    (math/add n 1) ; m = 0\n    (logic/mux\n      (ack (math/add m -1) 1) ; m > 0, n = 0\n      (ack (math/add m -1) (ack m (math/add n -1))) ; m > 0, n > 0\n      (logic/equal n 0))\n    (logic/equal m 0))))",
   "nodes": [
     {
-      "v": "defco_ack",
+      "v": "def_ack",
       "value": {
         "id": "ack",
         "inputPorts": {
@@ -211,7 +211,7 @@
             }
           ]
         },
-        "name": "defco_ack"
+        "name": "def_ack"
       }
     }
   ],

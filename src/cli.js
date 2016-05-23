@@ -20,38 +20,10 @@ if (process.env.BUGGY_COMPONENT_LIBRARY_HOST) {
   defaultElastic += ' or if not set to http://localhost:9200'
 }
 
-function isCyclic (obj) {
-  var seenObjects = [];
-
-  function detect (obj, key) {
-    if (obj && typeof obj === 'object') {
-      if (seenObjects.indexOf(obj) !== -1) {
-        return key
-      }
-      seenObjects.push(obj);
-      for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          var detected = detect(obj[key], key)
-          if (detected !== false) {
-            return key + '/' + detected
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-  return detect(obj, 'root');
-}
-
 function printJSON (json) {
   if (program.nice) {
     console.log(JSON.stringify(json, null, 2))
   } else {
-    var cycle = isCyclic(json)
-    if (cycle) {
-      console.log(cycle)
-    }
     console.log(JSON.stringify(json))
   }
 }

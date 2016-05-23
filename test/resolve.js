@@ -134,17 +134,17 @@ describe('Resolving port graph nodes', () => {
     var cmpd = readFixture('ack.json')
     return resolveWith(cmpd, resolve)
     .then((resolved) => {
-      expect(resolved.node('defco_ack:ack_4')).to.be.ok
-      expect(resolved.node('defco_ack:ack_4').inputPorts).to.be.ok
-      expect(resolved.node('defco_ack:ack_4').outputPorts).to.be.ok
-      expect(resolved.node('defco_ack:ack_8')).to.be.ok
-      expect(resolved.node('defco_ack:ack_8').inputPorts).to.be.ok
-      expect(resolved.node('defco_ack:ack_8').outputPorts).to.be.ok
+      expect(resolved.node('def_ack:ack_4')).to.be.ok
+      expect(resolved.node('def_ack:ack_4').inputPorts).to.be.ok
+      expect(resolved.node('def_ack:ack_4').outputPorts).to.be.ok
+      expect(resolved.node('def_ack:ack_8')).to.be.ok
+      expect(resolved.node('def_ack:ack_8').inputPorts).to.be.ok
+      expect(resolved.node('def_ack:ack_8').outputPorts).to.be.ok
       stringifyCheck(graphlib.json.write(resolved))
     })
   })
-  
-  it.only('can resolve a deep recursion without creating circular references', () => {
+
+  it('can resolve a deep recursion without creating circular references', () => {
     var cmpd = readFixture('deepRec.json')
     return resolveWith(cmpd, resolve)
     .then((resolved) => {

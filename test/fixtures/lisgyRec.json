@@ -1,7 +1,7 @@
 {
   "nodes": [
     {
-      "v": "defco_rec",
+      "v": "def_rec",
       "value": {
         "id": "rec",
         "inputPorts": {
@@ -45,7 +45,7 @@
             }
           ]
         },
-        "name": "defco_rec"
+        "name": "def_rec"
       }
     }
   ],

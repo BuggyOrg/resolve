@@ -1,0 +1,11 @@
+{
+  "nodes": [
+    {
+      "v": "rec",
+      "value": {
+        "meta": "test/deepRec", "version": "0.1.0"
+      }
+    }
+  ],
+  "edges": []
+}
