@@ -48,6 +48,26 @@
       "edges": [{"from": "a", "to": "rec:a"}, {"from": "rec:a", "to": "b"}]
     }
   },
+  "test/deepRec": {
+    "id": "test/deepRec",
+    "version": "0.1.0",
+    "inputPorts": {"a": "int"},
+    "outputPorts": {"a": "int"},
+    "implementation": {
+      "nodes": [{"meta": "test/deepRec2", "version": "0.1.0", "name": "rec"}],
+      "edges": []
+    }
+  },
+  "test/deepRec2": {
+    "id": "test/deepRec2",
+    "version": "0.1.0",
+    "inputPorts": {"a": "int"},
+    "outputPorts": {"a": "int"},
+    "implementation": {
+      "nodes": [{"meta": "test/deepRec", "version": "0.1.0", "name": "rec"}],
+      "edges": []
+    }
+  },
   "test/edge": {
     "id": "test/edge",
     "version": "0.1.0",

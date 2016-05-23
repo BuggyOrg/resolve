@@ -143,6 +143,14 @@ describe('Resolving port graph nodes', () => {
       stringifyCheck(graphlib.json.write(resolved))
     })
   })
+  
+  it.only('can resolve a deep recursion without creating circular references', () => {
+    var cmpd = readFixture('deepRec.json')
+    return resolveWith(cmpd, resolve)
+    .then((resolved) => {
+      stringifyCheck(graphlib.json.write(resolved))
+    })
+  })
 })
 
 describe('Processing compound nodes', () => {
