@@ -58,15 +58,29 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
       resNode.recursive = true
     }
     var isRecursive = _.find(resolvePath, (n) => n.meta === node.meta)
+    var queryNextNode = _.partial(queryNode, _, resolveFn, resolved, newPath)
     if (isRecursive) {
       resNode.recursesTo = isRecursive
       resNode.recursive = true
       delete resNode.path
     }
     if (resNode.atomic || resNode.recursive) {
+      if (resNode.id === 'functional/lambda') {
+        var lambda = node.data
+        lambda.id = resNode.branch + '_impl'
+        lambda.externalComponent = true
+        resolved[lambda.id] = lambda
+        return queryNextNode(lambda)
+        .then((lambdaImpl) => {
+          resNode.params = resNode.params || {}
+          resNode.params.implementation = lambda.id
+          resNode.isLambda = true
+          resNode.data = lambdaImpl
+          return resNode
+        })
+      }
       return resNode
     } else {
-      var queryNextNode = _.partial(queryNode, _, resolveFn, resolved, newPath)
       return Promise.all(_.map(resNode.implementation.nodes, queryNextNode))
       .then((implNodes) => {
         resNode.implementation.nodes = implNodes
@@ -83,6 +97,9 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
  */
 export function flattenNode (node) {
   if (node.atomic || node.recursive) {
+    if (node.isLambda && node.data) {
+      return [node].concat(flattenNode(node.data))
+    }
     return [node]
   } else {
     var impls = _(node.implementation.nodes)
@@ -95,6 +112,9 @@ export function flattenNode (node) {
 
 export function flattenEdges (node) {
   if (node.atomic || node.recursive) {
+    if (node.isLambda && node.data) {
+      return flattenEdges(node.data)
+    }
     return []
   } else {
     var subEdges = _(node.implementation.nodes)
