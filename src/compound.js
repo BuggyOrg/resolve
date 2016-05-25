@@ -73,7 +73,7 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
         return queryNextNode(lambda)
         .then((lambdaImpl) => {
           resNode.params = resNode.params || {}
-          resNode.params.implementation = lambda.id
+          resNode.params.implementation = lambdaImpl.branchPath
           resNode.isLambda = true
           resNode.data = lambdaImpl
           return resNode
