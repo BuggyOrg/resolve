@@ -41,6 +41,8 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
     var nodeIdentifier = {meta: resNode.id, branch: branchName, version: resNode.version, uniqueId: resNode.uniqueId, path: resolvePath}
     var newPath = appendBranch(resolvePath, nodeIdentifier)
     var branchPath = pathToString(newPath, (b) => b.branch)
+    nodeIdentifier.branchPath = branchPath
+    newPath = appendBranch(resolvePath, nodeIdentifier)
 
     resNode.path = _.map(resolvePath, (p) => _.omit(p, 'path'))
     resNode.params = node.params
