@@ -90,6 +90,12 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
       })
     }
   })
+  .catch((err) => {
+    throw new Error('Could not resolve node with id ' +
+      ((node.id) ? node.id : node.meta) + '\n' +
+      JSON.stringify(_.omit(node, 'implementation'), null, 2) + '\n' +
+      'already defined nodes' + _.keys(resolved) + err)
+  })
 }
 
 /**
