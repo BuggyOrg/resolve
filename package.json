@@ -1,6 +1,6 @@
 {
   "name": "@buggyorg/resolve",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "Algorithms to convert a program descriptor into a full graph representation.",
   "main": "lib/api.js",
   "bin": {
