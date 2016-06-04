@@ -8,6 +8,15 @@
     },
     "atomic": true
   },
+  "functional/lambda": {
+    "id": "functional/lambda",
+    "version": "0.1.0",
+    "inputPorts": {},
+    "outputPorts": {
+      "output": "string"
+    },
+    "atomic": true
+  },
   "test/compound": {
     "id": "test/compound",
     "version": "0.1.0",

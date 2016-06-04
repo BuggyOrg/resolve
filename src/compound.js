@@ -55,18 +55,19 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
     if (node.values) {
       resNode.values = node.values
     }
-    var branchIdx = _.findIndex(resolvePath, (n) => n.meta === node.meta && n.branch === node.name)
+    var branchIdx = _.findIndex(resolvePath, (n) => n.meta === node.meta && n.branch === node.name && n.branchPath.indexOf('defco_') !== 0)
+    var hasDefcoRecursion = _.find(resolvePath, (n) => n.meta === node.meta && n.branch === node.name)
     if (branchIdx !== -1) {
       resNode.recursive = true
     }
-    var isRecursive = _.find(resolvePath, (n) => n.meta === node.meta)
+    var isRecursive = _.find(resolvePath, (n) => n.meta === node.meta && n.branchPath.indexOf('defco_') !== 0)
     var queryNextNode = _.partial(queryNode, _, resolveFn, resolved, newPath)
     if (isRecursive) {
       resNode.recursesTo = isRecursive
       resNode.recursive = true
       delete resNode.path
     }
-    if (resNode.atomic || resNode.recursive) {
+    if (resNode.atomic || resNode.recursive || hasDefcoRecursion) {
       if (resNode.id === 'functional/lambda') {
         var lambda = node.data
         lambda.id = resNode.branch + '_impl'
@@ -104,7 +105,7 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
  * @return {Array} An array containing all the atomics of the compound node.
  */
 export function flattenNode (node) {
-  if (node.atomic || node.recursive) {
+  if (node.atomic || node.recursive || !node.implementation) {
     if (node.isLambda && node.data) {
       return [node].concat(flattenNode(node.data))
     }
@@ -119,7 +120,7 @@ export function flattenNode (node) {
 }
 
 export function flattenEdges (node) {
-  if (node.atomic || node.recursive) {
+  if (node.atomic || node.recursive || !node.implementation) {
     if (node.isLambda && node.data) {
       return flattenEdges(node.data)
     }

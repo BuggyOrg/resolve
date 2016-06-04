@@ -34,20 +34,6 @@ const resolveFn = (name, version) => {
   }
 }
 const stringifyCheck = (json) => {
-  var cache = []
-  var check = function (key, value) {
-    if (typeof value === 'object' && value !== null) {
-      if (cache.indexOf(value) !== -1) {
-        // Circular reference found, discard key
-        console.error('circular', value)
-        return
-      }
-      // Store value in our collection
-      cache.push(value)
-    }
-    return value
-  }
-
   return JSON.stringify(json, null, 2)
 }
 
@@ -149,6 +135,23 @@ describe('Resolving port graph nodes', () => {
     return resolveWith(cmpd, resolve)
     .then((resolved) => {
       stringifyCheck(graphlib.json.write(resolved))
+    })
+  })
+
+  it('can resolve a lambda function with defco-compounds', () => {
+    var cmpd = readFixture('lambda-defco.json')
+    return resolveWith(cmpd, resolve)
+    .then((resolved) => {
+      stringifyCheck(graphlib.json.write(resolved))
+    })
+  })
+
+  it('can resolve a lambda function with recursive defco-compounds', () => {
+    var cmpd = readFixture('lambda-defco-rec.json')
+    return resolveWith(cmpd, resolve)
+    .then((resolved) => {
+      expect(resolved.node('outer_5:lambda_2:lambda_2_impl:inner_3:not_0').recursesTo.branchPath)
+        .to.equal('outer_5:lambda_2:lambda_2_impl:inner_3')
     })
   })
 })
