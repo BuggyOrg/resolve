@@ -38,6 +38,18 @@ export function resolveWith (graph, resolve) {
       .map((node, idx) => appendNodeName(node, graphObj.nodes[idx].v))
       .map(compound.flattenNode)
       .flatten().value())*/
+    var recursiveRoots = _(newNodes)
+      .filter((n) => n.value.recursive)
+      .groupBy((n) => n.value.recursesTo.branchPath)
+      .value()
+    console.error(recursiveRoots)
+    newNodes = _.map(newNodes, (node) => {
+      if (recursiveRoots[node.value.branchPath]) {
+        return _.merge({}, node, {value: {recursiveRoot: true}})
+      } else {
+        return node
+      }
+    })
     var newEdges = _(nodes)
       .map((node, idx) => appendNodeName(node, graphObj.nodes[idx].v))
       .map(compound.flattenEdges)
