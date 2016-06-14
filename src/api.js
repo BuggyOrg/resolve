@@ -42,7 +42,6 @@ export function resolveWith (graph, resolve) {
       .filter((n) => n.value.recursive)
       .groupBy((n) => n.value.recursesTo.branchPath)
       .value()
-    console.error(recursiveRoots)
     newNodes = _.map(newNodes, (node) => {
       if (recursiveRoots[node.value.branchPath]) {
         return _.merge({}, node, {value: {recursiveRoot: true}})
