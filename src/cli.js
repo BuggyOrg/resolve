@@ -1,6 +1,6 @@
-#!/usr/bin/env node
+// #!/usr/bin/env node
 /* global __dirname, process */
-
+/*
 import program from 'commander'
 import fs from 'fs'
 import graphlib from 'graphlib'
@@ -68,3 +68,4 @@ stdinOrFile(program.file)
     console.error(err.stack)
     process.exit(1)
   })
+*/
