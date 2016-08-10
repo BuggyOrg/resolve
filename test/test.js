@@ -21,10 +21,11 @@ library.then((client) => client.components())
 describe('Resolving port graph nodes', () => {
   it('can resolve nodes with references to components', () => {
     var graph = Graph.empty()
-    .addNode({ref: 'test/atomic'})
+    .addNode({ref: 'test/atomic', name: 'a'})
 
     return library.then((client) => resolve(graph, client))
     .then((resGraph) => {
+      console.log(resGraph)
       expect(resGraph.allComponents()).to.have.length(1)
     })
   })

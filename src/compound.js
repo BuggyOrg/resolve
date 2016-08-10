@@ -16,6 +16,7 @@ export function pathToString (path, itemToId) {
  */
 export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
   var resPromise = null
+  // console.error('queryNode', node.v)
   if (node.id) {
     var exComp = {externalComponent: false}
     if (resolved[node.id] && resolved[node.id].externalComponent) {
@@ -32,9 +33,11 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
   return resPromise
   .then((resNode) => {
     if (_.has(resolved, resNode.id) && resolved[resNode.id].externalComponent) {
+      // console.error('is external', resNode.id)
       resNode.externalComponent = true
       resolved[node.meta] = resNode
     } else {
+      // console.error('is not external', resNode.id)
       resolved[(node.name) ? node.name : node.meta] = resNode
     }
     var branchName = (node.name) ? node.name : resNode.id
@@ -84,6 +87,7 @@ export function queryNode (node, resolveFn, resolved = {}, resolvePath = []) {
       }
       return resNode
     } else {
+      // console.error(resNode.implementation.nodes)
       return Promise.all(_.map(resNode.implementation.nodes, queryNextNode))
       .then((implNodes) => {
         resNode.implementation.nodes = implNodes
