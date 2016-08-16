@@ -39,7 +39,7 @@ describe('Resolving port graph nodes', () => {
 
     return library.then((client) => resolve(graph, client.component))
     .then((resGraph) => {
-      expect(resGraph.nodes()).to.have.length(2)
+      expect(resGraph.nodes()).to.have.length(1)
       expect(resGraph.components()).to.have.length(2)
     })
   })

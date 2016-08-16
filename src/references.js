@@ -19,11 +19,9 @@ import {Node, Compound} from '@buggyorg/graphtools'
  */
 export function requiredComponents (node) {
   if (Node.isReference(node)) {
-    console.log('req is ref', node)
     return node
   } else if (Compound.isCompound(node)) {
-    console.log('req is compound', node)
-    return _.compact(node.implementation.nodes.map(requiredComponents)).map((ref) => _.merge({type: 'compound', compound: node.id}, ref))
+    return _.compact(node.implementation.Nodes.map(requiredComponents))
   } else if (!Node.isValid(node)) {
     throw new Error('Cannot resolve invalid node: ' + JSON.stringify(node))
   }

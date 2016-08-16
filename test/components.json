@@ -17,8 +17,8 @@
       "version": "0.1.0",
       "ports": [{"name": "output", "kind": "output", "type": "string"}],
       "implementation": {
-        "nodes": [{"ref": "test/atomic", "version": "0.1.0", "id": "a"}],
-        "edges": []
+        "Nodes": [{"ref": "test/atomic", "version": "0.1.0", "id": "a"}],
+        "Edges": []
       }
     },
     {
@@ -26,8 +26,8 @@
       "version": "0.1.0",
       "ports": [{"name": "output", "kind": "output", "type": "string"}],
       "implementation": {
-        "nodes": [{"ref": "test/compound", "version": "0.1.0", "id": "a"}],
-        "edges": []
+        "Nodes": [{"ref": "test/compound", "version": "0.1.0", "id": "a"}],
+        "Edges": []
       }
     },
     {
@@ -35,8 +35,8 @@
       "version": "0.1.0",
       "ports": [{"name": "output", "kind": "output", "type": "string"}],
       "implementation": {
-        "nodes": [{"ref": "test/recursive", "version": "0.1.0","id":"r2"}],
-        "edges": []
+        "Nodes": [{"ref": "test/recursive", "version": "0.1.0","id":"r2"}],
+        "Edges": []
       }
     },
     {
@@ -47,8 +47,8 @@
         {"name": "b", "kind": "output", "type": "number"}
       ],
       "implementation": {
-        "nodes": [{"ref": "test/recursive2", "version": "0.1.0", "id": "rec"}],
-        "edges": [{"from": "a", "to": "rec:a"}, {"from": "rec:a", "to": "b"}]
+        "Nodes": [{"ref": "test/recursive2", "version": "0.1.0", "id": "rec"}],
+        "Edges": [{"from": "a", "to": "rec:a"}, {"from": "rec:a", "to": "b"}]
       }
     },
     {
@@ -59,8 +59,8 @@
         {"name": "b", "kind": "output", "type": "number"}
       ],
       "implementation": {
-        "nodes": [{"ref": "test/deepRec2", "version": "0.1.0", "id": "rec"}],
-        "edges": []
+        "Nodes": [{"ref": "test/deepRec2", "version": "0.1.0", "id": "rec"}],
+        "Edges": []
       }
     },
     {
@@ -71,8 +71,8 @@
         {"name": "b", "kind": "output", "type": "number"}
       ],
       "implementation": {
-        "nodes": [{"ref": "test/deepRec", "version": "0.1.0", "id": "rec"}],
-        "edges": []
+        "Nodes": [{"ref": "test/deepRec", "version": "0.1.0", "id": "rec"}],
+        "Edges": []
       }
     },
     {
@@ -83,8 +83,8 @@
         {"name": "out", "kind": "output", "type": "number"}
       ],
       "implementation": {
-        "nodes": [],
-        "edges": [{"from": "in", "to": "out"}]
+        "Nodes": [],
+        "Edges": [{"from": "in", "to": "out"}]
       }
     },
     {
@@ -95,8 +95,8 @@
         {"name": "out", "kind": "output", "type": "number"}
       ],
       "implementation": {
-        "nodes": [{"ref": "test/edge", "id": "e", "version": "0.1.0"}],
-        "edges": [{"from": "in", "to": "e:in"}, {"from": "e:out", "to": "out"}]
+        "Nodes": [{"ref": "test/edge", "id": "e", "version": "0.1.0"}],
+        "Edges": [{"from": "in", "to": "e:in"}, {"from": "e:out", "to": "out"}]
       }
     }
   ],
