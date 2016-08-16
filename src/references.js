@@ -1,6 +1,6 @@
 
 import _ from 'lodash'
-import {Node} from '@buggyorg/graphtools'
+import {Node, Compound} from '@buggyorg/graphtools'
 
 /**
  * Find all necessary components in a node. If the node is a reference, this reference is a necessary component.
@@ -15,14 +15,16 @@ import {Node} from '@buggyorg/graphtools'
  *
  *   These fields identify the compound in which the reference is used.
  *  - If the node is already a valid node it will return undefined.
+ * @throws {Error} If the given node is malformatted.
  */
 export function requiredComponents (node) {
   if (Node.isReference(node)) {
+    console.log('req is ref', node)
     return node
-  } else if (Node.isCompound(node)) {
-    console.log(node.implementation.nodes)
-    console.log(node.implementation.nodes.map(requiredComponents))
+  } else if (Compound.isCompound(node)) {
+    console.log('req is compound', node)
     return _.compact(node.implementation.nodes.map(requiredComponents)).map((ref) => _.merge({type: 'compound', compound: node.id}, ref))
+  } else if (!Node.isValid(node)) {
+    throw new Error('Cannot resolve invalid node: ' + JSON.stringify(node))
   }
-  console.log('not resolved', node)
 }
