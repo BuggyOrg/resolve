@@ -2,12 +2,18 @@
 import {Component, Compound} from '@buggyorg/graphtools'
 import _ from 'lodash'
 import * as Client from './client'
-import {requiredComponents} from './references'
+import {requiredComponents, requiredComponentsByPath} from './references'
 require('promise-resolve-deep')(Promise)
 
 function requiredGraphComponents (graph) {
   const req = _.partial(requiredComponents, _)
   return _.compact(_.flatten(graph.nodesDeep().map(req)))
+}
+
+function requiredGraphComponentsPath (graph) {
+  const req = _.partial(requiredComponentsByPath, graph, _)
+  return _.compact(_.flatten(graph.nodePathsDeep().map(req).concat(
+    graph.componentsPaths().map(req))))
 }
 
 function cleanReference (ref, id) {
@@ -41,14 +47,20 @@ export function resolve (graph, externalClients, root = '') {
   return resolveWith(graph, client)
 }
 
-export function resolveWith (graph, client) {
-  var needed = requiredGraphComponents(graph)
-  return Promise.resolveDeep(needed.map((ref) => _.merge(ref, {component: client(ref.ref)})))
-  .then((newComponents) => {
-    if (newComponents.length === 0) return graph.disallowReferences()
-    graph.Components = graph.Components.concat(newComponents
+function extendWithComponents (graph, components) {
+  graph.Components = graph.Components.concat(components
       .filter((c) => !graph.hasComponent(c.component))
       .map((c) => c.component))
-    return resolveWith(resolveReferences(graph, newComponents), client)
+  return graph
+}
+
+export function resolveWith (graph, client) {
+  var needed = requiredGraphComponents(graph)
+  return Promise.resolveDeep(needed.map((ref) => _.merge({}, ref, {component: client(ref.ref)})))
+  .then((newComponents) => {
+    if (newComponents.length === 0) return graph.disallowReferences()
+    graph = extendWithComponents(graph, newComponents)
+    graph = resolveReferences(graph, newComponents)
+    return resolveWith(graph, client)
   })
 }

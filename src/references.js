@@ -26,3 +26,14 @@ export function requiredComponents (node) {
     throw new Error('Cannot resolve invalid node: ' + JSON.stringify(node))
   }
 }
+
+export function requiredComponentsByPath (graph, nodePath) {
+  const node = graph.node(nodePath)
+  if (Node.isReference(node)) {
+    return nodePath
+  } else if (Compound.isCompound(node)) {
+    return _.compact(node.implementation.nodes.map(requiredComponents)).map((ref) => _.merge({type: 'compound', compound: nodePath}, ref))
+  } else if (!Node.isValid(node)) {
+    throw new Error('Cannot resolve invalid node "' + nodePath + '": ' + JSON.stringify(node))
+  }
+}
