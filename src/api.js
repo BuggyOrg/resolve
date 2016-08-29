@@ -1,19 +1,20 @@
 
-import {Component, Compound} from '@buggyorg/graphtools'
+import {Component, Node} from '@buggyorg/graphtools'
 import _ from 'lodash'
 import * as Client from './client'
-import {requiredComponents, requiredComponentsByPath} from './references'
+// import {requiredComponentsByPath} from './references'
 require('promise-resolve-deep')(Promise)
 
+/*
 function requiredGraphComponents (graph) {
   const req = _.partial(requiredComponents, _)
   return _.compact(_.flatten(graph.nodesDeep().map(req)))
 }
+*/
 
 function requiredGraphComponentsPath (graph) {
-  const req = _.partial(requiredComponentsByPath, graph, _)
-  return _.compact(_.flatten(graph.nodePathsDeep().map(req).concat(
-    graph.componentsPaths().map(req))))
+  // const req = _.partial(requiredComponentsByPath, graph, _)
+  return graph.nodesDeep().filter(Node.isReference)
 }
 
 function cleanReference (ref, id) {
@@ -24,21 +25,17 @@ function cleanReference (ref, id) {
   return clean
 }
 
+/*
 function replaceCompoundImplementation (graph, compoundId, nodeId, newNode) {
   var cmp = graph.node(compoundId)
   var newCompound = Compound.replaceImplementation(cmp, nodeId, newNode)
   return graph.replaceNode(cmp, newCompound)
-}
+}*/
 
 function resolveReferences (graph, components) {
-  return components.reduce((curGraph, cmp) => {
-    if (Compound.isCompound(cmp.component)) {
-      return replaceCompoundImplementation(curGraph, cmp.compound, cmp.id, Component.createNode(
-        cleanReference(cmp), cmp.component))
-    } else {
-      return curGraph.replaceNode(Component.createNode(cleanReference(cmp), cmp.component))
-    }
-  }, graph)
+  return components.reduce((curGraph, cmp) =>
+    curGraph.replaceNode(cmp.path, Component.createNode(cleanReference(cmp), cmp.component))
+  , graph)
 }
 
 export function resolve (graph, externalClients, root = '') {
@@ -47,7 +44,10 @@ export function resolve (graph, externalClients, root = '') {
   return resolveWith(graph, client)
 }
 
-function extendWithComponents (graph, components) {
+/**
+ * Store the component in the graph component list.
+ */
+function storeComponent (graph, components) {
   graph.Components = graph.Components.concat(components
       .filter((c) => !graph.hasComponent(c.component))
       .map((c) => c.component))
@@ -55,11 +55,13 @@ function extendWithComponents (graph, components) {
 }
 
 export function resolveWith (graph, client) {
-  var needed = requiredGraphComponents(graph)
+  var needed = requiredGraphComponentsPath(graph)
+  console.log(needed)
   return Promise.resolveDeep(needed.map((ref) => _.merge({}, ref, {component: client(ref.ref)})))
   .then((newComponents) => {
+    console.log(JSON.stringify(graph.toJSON(), null, 2))
     if (newComponents.length === 0) return graph.disallowReferences()
-    graph = extendWithComponents(graph, newComponents)
+    graph = storeComponent(graph, newComponents)
     graph = resolveReferences(graph, newComponents)
     return resolveWith(graph, client)
   })

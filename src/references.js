@@ -1,7 +1,18 @@
 
-import _ from 'lodash'
-import {Node, Compound} from '@buggyorg/graphtools'
+// import _ from 'lodash'
+import {Node} from '@buggyorg/graphtools'
 
+/*
+export function requiredComponents (node) {
+  if (Node.isReference(node)) {
+    return node
+  } else if (Compound.isCompound(node)) {
+    return _.compact(node.Nodes.map(requiredComponents))
+  } else if (!Node.isValid(node)) {
+    throw new Error('Cannot resolve invalid node: ' + JSON.stringify(node))
+  }
+}
+*/
 /**
  * Find all necessary components in a node. If the node is a reference, this reference is a necessary component.
  * If the node is a compound node look for the implementation and process the nodes recursively.
@@ -17,23 +28,10 @@ import {Node, Compound} from '@buggyorg/graphtools'
  *  - If the node is already a valid node it will return undefined.
  * @throws {Error} If the given node is malformatted.
  */
-export function requiredComponents (node) {
+export function requiredComponents (graph, node) {
   if (Node.isReference(node)) {
-    return node
-  } else if (Compound.isCompound(node)) {
-    return _.compact(node.implementation.Nodes.map(requiredComponents))
+    return {ref: node.componentId, path: Node.path(node)}
   } else if (!Node.isValid(node)) {
     throw new Error('Cannot resolve invalid node: ' + JSON.stringify(node))
-  }
-}
-
-export function requiredComponentsByPath (graph, nodePath) {
-  const node = graph.node(nodePath)
-  if (Node.isReference(node)) {
-    return nodePath
-  } else if (Compound.isCompound(node)) {
-    return _.compact(node.implementation.nodes.map(requiredComponents)).map((ref) => _.merge({type: 'compound', compound: nodePath}, ref))
-  } else if (!Node.isValid(node)) {
-    throw new Error('Cannot resolve invalid node "' + nodePath + '": ' + JSON.stringify(node))
   }
 }
