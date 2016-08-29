@@ -56,10 +56,8 @@ function storeComponent (graph, components) {
 
 export function resolveWith (graph, client) {
   var needed = requiredGraphComponentsPath(graph)
-  console.log(needed)
   return Promise.resolveDeep(needed.map((ref) => _.merge({}, ref, {component: client(ref.ref)})))
   .then((newComponents) => {
-    console.log(JSON.stringify(graph.toJSON(), null, 2))
     if (newComponents.length === 0) return graph.disallowReferences()
     graph = storeComponent(graph, newComponents)
     graph = resolveReferences(graph, newComponents)

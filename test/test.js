@@ -25,7 +25,7 @@ describe('Resolving port graph nodes', () => {
   it('can resolve nodes with references to components in the graph', () => {
     var graph = Graph.empty()
     .addNode({ref: 'graph_component', id: 'a'})
-    .addComponent({meta: 'graph_component', version: '0.1.0', ports: [{name: 'output', kind: 'output', type: 'string'}], atomic: true})
+    .addComponent({componentId: 'graph_component', version: '0.1.0', ports: [{name: 'output', kind: 'output', type: 'string'}], atomic: true})
 
     return library.then((client) => resolve(graph, client.component))
     .then((resGraph) => {
@@ -33,7 +33,7 @@ describe('Resolving port graph nodes', () => {
     })
   })
 
-  it.only('can resolve compound nodes and their references', () => {
+  it('can resolve compound nodes and their references', () => {
     var graph = Graph.empty()
     .addNode({ref: 'test/compound', id: 'a'})
 

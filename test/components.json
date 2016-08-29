@@ -1,105 +1,89 @@
 {
   "Components": [
     {
-      "meta": "test/atomic",
+      "componentId": "test/atomic",
       "version": "0.1.0",
       "ports": [{"name": "output", "kind": "output", "type": "string"}],
       "atomic": true
     },
     {
-      "meta": "functional/lambda",
+      "componentId": "functional/lambda",
       "version": "0.1.0",
       "ports": [{"name": "output", "kind": "output", "type": "string"}],
       "atomic": true
     },
     {
-      "meta": "test/compound",
+      "componentId": "test/compound",
       "version": "0.1.0",
       "ports": [{"name": "output", "kind": "output", "type": "string"}],
-      "implementation": {
-        "Nodes": [{"ref": "test/atomic", "version": "0.1.0", "id": "a"}],
-        "Edges": []
-      }
+      "Nodes": [{"ref": "test/atomic", "version": "0.1.0", "id": "a"}],
+      "Edges": []
     },
     {
-      "meta": "test/compound2",
+      "componentId": "test/compound2",
       "version": "0.1.0",
       "ports": [{"name": "output", "kind": "output", "type": "string"}],
-      "implementation": {
-        "Nodes": [{"ref": "test/compound", "version": "0.1.0", "id": "a"}],
-        "Edges": []
-      }
+      "Nodes": [{"ref": "test/compound", "version": "0.1.0", "id": "a"}],
+      "Edges": []
     },
     {
-      "meta": "test/recursive",
+      "componentId": "test/recursive",
       "version": "0.1.0",
       "ports": [{"name": "output", "kind": "output", "type": "string"}],
-      "implementation": {
-        "Nodes": [{"ref": "test/recursive", "version": "0.1.0","id":"r2"}],
-        "Edges": []
-      }
+      "Nodes": [{"ref": "test/recursive", "version": "0.1.0","id":"r2"}],
+      "Edges": []
     },
     {
-      "meta": "test/recursive",
+      "componentId": "test/recursive",
       "version": "0.1.0",
       "ports": [
         {"name": "a", "kind": "input", "type": "number"},
         {"name": "b", "kind": "output", "type": "number"}
       ],
-      "implementation": {
-        "Nodes": [{"ref": "test/recursive2", "version": "0.1.0", "id": "rec"}],
-        "Edges": [{"from": "a", "to": "rec:a"}, {"from": "rec:a", "to": "b"}]
-      }
+      "Nodes": [{"ref": "test/recursive2", "version": "0.1.0", "id": "rec"}],
+      "Edges": [{"from": "a", "to": "rec:a"}, {"from": "rec:a", "to": "b"}]
     },
     {
-      "meta": "test/deepRec",
+      "componentId": "test/deepRec",
       "version": "0.1.0",
       "ports": [
         {"name": "a", "kind": "input", "type": "number"},
         {"name": "b", "kind": "output", "type": "number"}
       ],
-      "implementation": {
-        "Nodes": [{"ref": "test/deepRec2", "version": "0.1.0", "id": "rec"}],
-        "Edges": []
-      }
+      "Nodes": [{"ref": "test/deepRec2", "version": "0.1.0", "id": "rec"}],
+      "Edges": []
     },
     {
-      "meta": "test/deepRec2",
+      "componentId": "test/deepRec2",
       "version": "0.1.0",
       "ports": [
         {"name": "a", "kind": "input", "type": "number"},
         {"name": "b", "kind": "output", "type": "number"}
       ],
-      "implementation": {
-        "Nodes": [{"ref": "test/deepRec", "version": "0.1.0", "id": "rec"}],
-        "Edges": []
-      }
+      "Nodes": [{"ref": "test/deepRec", "version": "0.1.0", "id": "rec"}],
+      "Edges": []
     },
     {
-      "meta": "test/edge",
+      "componentId": "test/edge",
       "version": "0.1.0",
       "ports": [
         {"name": "in", "kind": "input", "type": "number"},
         {"name": "out", "kind": "output", "type": "number"}
       ],
-      "implementation": {
-        "Nodes": [],
-        "Edges": [{"from": "in", "to": "out"}]
-      }
+      "Nodes": [],
+      "Edges": [{"from": "in", "to": "out"}]
     },
     {
-      "meta": "test/edges",
+      "componentId": "test/edges",
       "version": "0.1.0",
       "ports": [
         {"name": "in", "kind": "input", "type": "number"},
         {"name": "out", "kind": "output", "type": "number"}
       ],
-      "implementation": {
-        "Nodes": [{"ref": "test/edge", "id": "e", "version": "0.1.0"}],
-        "Edges": [{"from": "in", "to": "e:in"}, {"from": "e:out", "to": "out"}]
-      }
+      "Nodes": [{"ref": "test/edge", "id": "e", "version": "0.1.0"}],
+      "Edges": [{"from": "in", "to": "e:in"}, {"from": "e:out", "to": "out"}]
     }
   ],
-  "meta": {},
+  "metaInformation": {},
   "config": {}
 }
