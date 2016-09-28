@@ -1,12 +1,13 @@
 
 import promiseAny from 'promise-any'
 import _ from 'lodash'
+import {component} from '@buggyorg/graphtools'
 
 export function arrayClient (clientArray) {
   const safeClients = _.map(clientArray, makeSafe)
-  return (meta) => promiseAny(_.map(safeClients, (client) => client(meta)))
+  return (componentId) => promiseAny(_.map(safeClients, (client) => client(componentId)))
   .catch((err) => {
-    throw new Error(`Unable to find the component '${meta}' in ${err.length} sources.`)
+    throw new Error(`Unable to find the component '${componentId}' in ${err.length} sources.`)
   })
 }
 
@@ -31,5 +32,5 @@ export function normalizeClients (clients) {
 }
 
 export function baseClient (graph) {
-  return graph.component
+  return (componentId) => component(componentId, graph)
 }

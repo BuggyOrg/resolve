@@ -1,9 +1,13 @@
 
-import {Component, Node} from '@buggyorg/graphtools'
-import _ from 'lodash'
+import curry from 'lodash/fp/curry'
+import merge from 'lodash/fp/merge'
+import omit from 'lodash/fp/omit'
+import * as Graph from '@buggyorg/graphtools'
 import * as Client from './client'
 // import {requiredComponentsByPath} from './references'
 require('promise-resolve-deep')(Promise)
+const Node = Graph.Node
+const Component = Graph.Component
 
 /*
 function requiredGraphComponents (graph) {
@@ -12,15 +16,15 @@ function requiredGraphComponents (graph) {
 }
 */
 
-function requiredGraphComponentsPath (graph) {
+function requiredGraphComponents (graph) {
   // const req = _.partial(requiredComponentsByPath, graph, _)
-  return graph.nodesDeep().filter(Node.isReference)
+  return Graph.nodesDeepBy(Node.isReference, graph)
 }
 
 function cleanReference (ref, id) {
-  var clean = _.omit(ref, ['component', 'ref'])
+  var clean = omit(['component', 'ref'], ref)
   if (id) {
-    _.merge({}, clean, {id})
+    return merge(clean, {id})
   }
   return clean
 }
@@ -32,35 +36,38 @@ function replaceCompoundImplementation (graph, compoundId, nodeId, newNode) {
   return graph.replaceNode(cmp, newCompound)
 }*/
 
-function resolveReferences (graph, components) {
-  return components.reduce((curGraph, cmp) =>
-    curGraph.replaceNode(cmp.path, Component.createNode(cleanReference(cmp), cmp.component))
-  , graph)
-}
+const resolveReferences = curry((components, graph) => {
+  return Graph.flow(
+    components.map((cmp) =>
+      Graph.replaceNode(cmp.path, Component.createNode(cleanReference(cmp), cmp.component)))
+  )(graph)
+})
 
-export function resolve (graph, externalClients, root = '') {
+export function resolve (graph, externalClients) {
   var client = Client.arrayClient(
     Client.normalizeClients(externalClients).concat(Client.baseClient(graph)))
-  return resolveWith(graph, client)
+  return resolveWith(client, graph)
 }
 
 /**
  * Store the component in the graph component list.
  */
-function storeComponent (graph, components) {
-  graph.Components = graph.Components.concat(components
-      .filter((c) => !graph.hasComponent(c.component))
+const storeComponent = curry((components, graph) => {
+  graph.components = Graph.components(graph).concat(components
+      .filter((c) => !Graph.hasComponent(c.component, graph))
       .map((c) => c.component))
   return graph
-}
+})
 
-export function resolveWith (graph, client) {
-  var needed = requiredGraphComponentsPath(graph)
-  return Promise.resolveDeep(needed.map((ref) => _.merge({}, ref, {component: client(ref.ref)})))
+export const resolveWith = curry((client, graph) => {
+  var needed = requiredGraphComponents(graph)
+  return Promise.resolveDeep(needed.map((ref) => merge(ref, {component: client(ref.ref)})))
   .then((newComponents) => {
-    if (newComponents.length === 0) return graph.disallowReferences()
-    graph = storeComponent(graph, newComponents)
-    graph = resolveReferences(graph, newComponents)
-    return resolveWith(graph, client)
+    if (newComponents.length === 0) return graph // .disallowReferences()
+    return Graph.flow(
+      storeComponent(newComponents),
+      resolveReferences(newComponents),
+      resolveWith(client)
+    )(graph)
   })
-}
+})

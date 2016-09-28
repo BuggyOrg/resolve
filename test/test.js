@@ -13,40 +13,45 @@ var library = Library.fromFile('./test/components.json')
 
 describe('Resolving port graph nodes', () => {
   it('can resolve nodes with references to components in a library', () => {
-    var graph = Graph.empty()
-    .addNode({ref: 'test/atomic', id: 'a'})
+    var graph = Graph.flow(
+      Graph.addNode({ref: 'test/atomic', name: 'a'})
+    )()
 
     return library.then((client) => resolve(graph, client.component))
     .then((resGraph) => {
-      expect(resGraph.components()).to.have.length(1)
+      expect(Graph.components(resGraph)).to.have.length(1)
     })
   })
 
   it('can resolve nodes with references to components in the graph', () => {
-    var graph = Graph.empty()
-    .addNode({ref: 'graph_component', id: 'a'})
-    .addComponent({componentId: 'graph_component', version: '0.1.0', ports: [{name: 'output', kind: 'output', type: 'string'}], atomic: true})
+    var graph = Graph.flow(
+      Graph.addNode({ref: 'graph_component', name: 'a'}),
+      Graph.addComponent({componentId: 'graph_component', version: '0.1.0', ports: [{port: 'output', kind: 'output', type: 'string'}], atomic: true})
+    )()
 
     return library.then((client) => resolve(graph, client.component))
     .then((resGraph) => {
-      expect(resGraph.components()).to.have.length(1)
+      expect(Graph.nodes(resGraph)).to.have.length(1)
     })
   })
 
   it('can resolve compound nodes and their references', () => {
-    var graph = Graph.empty()
-    .addNode({ref: 'test/compound', id: 'a'})
+    var graph = Graph.flow(
+      Graph.addNode({ref: 'test/compound', name: 'a'})
+    )()
 
     return library.then((client) => resolve(graph, client.component))
     .then((resGraph) => {
-      expect(resGraph.nodes()).to.have.length(1)
-      expect(resGraph.components()).to.have.length(2)
+      expect(Graph.nodes(resGraph)).to.have.length(1)
+      expect(Graph.nodesDeep(resGraph)).to.have.length(2)
+      expect(Graph.components(resGraph)).to.have.length(2)
     })
   })
 
   it('fails if the component could not be found', () => {
-    var graph = Graph.empty()
-    .addNode({ref: 'non_existent', id: 'a'})
+    var graph = Graph.flow(
+      Graph.addNode({ref: 'non_existent', name: 'a'})
+    )()
 
     return expect(library.then((client) => resolve(graph, client.component))).to.be.rejectedWith(/non_existent/)
   })
