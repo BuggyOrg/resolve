@@ -48,6 +48,32 @@ describe('Resolving port graph nodes', () => {
     })
   })
 
+  it('resolves recursive nodes', () => {
+    var graph = Graph.flow(
+      Graph.addNode({ref: 'test/recursive', name: 'a'})
+    )()
+
+    return library.then((client) => resolve(graph, client.component))
+    .then((resGraph) => {
+      expect(Graph.nodes(resGraph)).to.have.length(1)
+      expect(Graph.nodesDeep(resGraph)).to.have.length(2)
+      expect(Graph.components(resGraph)).to.have.length(1)
+    })
+  })
+
+  it('can resolve deep recursions', () => {
+    var graph = Graph.flow(
+      Graph.addNode({ref: 'test/deepRec', name: 'a'})
+    )()
+
+    return library.then((client) => resolve(graph, client.component))
+    .then((resGraph) => {
+      expect(Graph.nodes(resGraph)).to.have.length(1)
+      expect(Graph.nodesDeep(resGraph)).to.have.length(3)
+      expect(Graph.components(resGraph)).to.have.length(2)
+    })
+  })
+
   it('fails if the component could not be found', () => {
     var graph = Graph.flow(
       Graph.addNode({ref: 'non_existent', name: 'a'})

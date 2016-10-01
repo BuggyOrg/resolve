@@ -34,7 +34,7 @@
       "edges": []
     },
     {
-      "componentId": "test/recursive",
+      "componentId": "test/recursive2",
       "version": "0.1.0",
       "ports": [
         {"port": "a", "kind": "input", "type": "number"},
