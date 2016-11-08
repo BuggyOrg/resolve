@@ -40,8 +40,9 @@
         {"port": "a", "kind": "input", "type": "number"},
         {"port": "b", "kind": "output", "type": "number"}
       ],
-      "nodes": [{"ref": "test/recursive2", "version": "0.1.0", "name": "rec"}],
-      "edges": [{"from": "a", "to": "rec:a"}, {"from": "rec:a", "to": "b"}]
+      "id": "rec",
+      "nodes": [{"ref": "test/recursive2", "version": "0.1.0", "name": "rec", "id": "a"}],
+      "edges": [{"from": "rec@a", "to": "a@0"}, {"from": "a@0", "to": "rec@b"}]
     },
     {
       "componentId": "test/deepRec",
@@ -70,8 +71,9 @@
         {"port": "in", "kind": "input", "type": "number"},
         {"port": "out", "kind": "output", "type": "number"}
       ],
+      "id": "edge",
       "nodes": [],
-      "edges": [{"from": "in", "to": "out"}]
+      "edges": [{"from": {"node": "edge", "port": "in", "layer": "dataflow"}, "to": {"node": "edge", "port": "out", "layer": "dataflow"}}]
     },
     {
       "componentId": "test/edges",
@@ -80,8 +82,22 @@
         {"port": "in", "kind": "input", "type": "number"},
         {"port": "out", "kind": "output", "type": "number"}
       ],
-      "nodes": [{"ref": "test/edge", "name": "e", "version": "0.1.0"}],
-      "edges": [{"from": "in", "to": "e:in"}, {"from": "e:out", "to": "out"}]
+      "id": "edges",
+      "nodes": [{"ref": "test/edge", "id": "e", "version": "0.1.0"}],
+      "edges": [{"from": {"node": "edges", "port": "in", "layer": "dataflow"}, "to": {"node": "e", "port": "in", "layer": "dataflow"}},
+                {"from": {"node": "e", "port": "out", "layer": "dataflow"}, "to": {"node": "edges", "port": "out", "layer": "dataflow"}}]
+    },
+    {
+      "componentId": "test/edges2",
+      "version": "0.1.0",
+      "ports": [
+        {"port": "in", "kind": "input", "type": "number"},
+        {"port": "out", "kind": "output", "type": "number"}
+      ],
+      "id": "edges2",
+      "nodes": [{"ref": "test/edge", "id": "e", "version": "0.1.0"}],
+      "edges": [{"from": {"node": "edges2", "port": "0", "layer": "dataflow"}, "to": {"node": "e", "port": "0", "layer": "dataflow"}},
+                {"from": {"node": "e", "port": "0", "layer": "dataflow"}, "to": {"node": "edges2", "port": "0", "layer": "dataflow"}}]
     }
   ],
   "metaInformation": {},

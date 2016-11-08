@@ -10,6 +10,7 @@ chai.use(chaiAsPromised)
 var expect = chai.expect
 
 var library = Library.fromFile('./test/components.json')
+const Node = Graph.Node
 
 describe('Resolving port graph nodes', () => {
   it('can resolve nodes with references to components in a library', () => {
@@ -80,5 +81,23 @@ describe('Resolving port graph nodes', () => {
     )()
 
     return expect(library.then((client) => resolve(graph, client.component))).to.be.rejectedWith(/non_existent/)
+  })
+
+  describe.only('Edges in references', () => {
+    it('correctly adds edges in compounds', () => {
+      var graph = Graph.flow(
+        Graph.addNode({ref: 'test/edge', name: 'a'})
+      )()
+      return library.then((client) => resolve(graph, client.component))
+      .then((resGraph) => {
+        expect(Graph.edges(resGraph)).to.have.length(1)
+        expect(Graph.successors('a', resGraph)).to.have.length(1)
+        expect(Node.name(Graph.node(Graph.successors('a', resGraph)[0], resGraph))).to.equal('a')
+      })
+    })
+
+    it('resolves port numbers in edges in resolve', () => {
+
+    })
   })
 })

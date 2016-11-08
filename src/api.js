@@ -9,13 +9,6 @@ const Node = Graph.Node
 const Component = Graph.Component
 const CompoundPath = Graph.CompoundPath
 
-/*
-function requiredGraphComponents (graph) {
-  const req = _.partial(requiredComponents, _)
-  return _.compact(_.flatten(graph.nodesDeep().map(req)))
-}
-*/
-
 function requiredGraphComponents (graph) {
   // const req = _.partial(requiredComponentsByPath, graph, _)
   return Graph.nodesDeepBy(Node.isReference, graph)
