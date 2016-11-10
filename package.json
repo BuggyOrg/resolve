@@ -20,7 +20,7 @@
   "author": "Maximilian Klein",
   "license": "MIT",
   "devDependencies": {
-    "@buggyorg/library-client": "0.4.0",
+    "@buggyorg/library-client": "0.4.1",
     "@buggyorg/graphtools": "^0.4.0-pre.7",
     "babel-cli": "^6.6.0",
     "babel-preset-es2015": "^6.5.0",
