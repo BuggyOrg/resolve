@@ -83,7 +83,7 @@ describe('Resolving port graph nodes', () => {
     return expect(library.then((client) => resolve(graph, client.component))).to.be.rejectedWith(/non_existent/)
   })
 
-  describe.only('Edges in references', () => {
+  describe('Edges in references', () => {
     it('correctly adds edges in compounds', () => {
       var graph = Graph.flow(
         Graph.addNode({ref: 'test/edge', name: 'a'})
@@ -97,7 +97,17 @@ describe('Resolving port graph nodes', () => {
     })
 
     it('resolves port numbers in edges in resolve', () => {
-
+      var graph = Graph.flow(
+        Graph.addNode({ref: 'test/atomic', name: 'a'}),
+        Graph.addNode({ref: 'test/atomic', name: 'b'}),
+        Graph.addEdge({from: 'b@0', to: 'a@0'})
+      )()
+      return library.then((client) => resolve(graph, client.component))
+      .then((resGraph) => {
+        expect(Graph.edges(resGraph)).to.have.length(1)
+        expect(Graph.successors('b', resGraph)).to.have.length(1)
+        expect(Node.name(Graph.node(Graph.successors('b', resGraph)[0], resGraph))).to.equal('a')
+      })
     })
   })
 })

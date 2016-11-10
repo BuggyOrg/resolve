@@ -3,7 +3,7 @@
     {
       "componentId": "test/atomic",
       "version": "0.1.0",
-      "ports": [{"port": "output", "kind": "output", "type": "string"}],
+      "ports": [{"port": "output", "kind": "output", "type": "string"}, {"port": "input", "kind": "input", "type": "string"}],
       "atomic": true
     },
     {
