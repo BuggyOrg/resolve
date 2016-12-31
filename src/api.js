@@ -27,7 +27,7 @@ function replaceCompoundImplementation (graph, compoundId, nodeId, newNode) {
   var cmp = graph.node(compoundId)
   var newCompound = Compound.replaceImplementation(cmp, nodeId, newNode)
   return graph.replaceNode(cmp, newCompound)
-}*/
+} */
 
 const resolveReferences = curry((components, graph) => {
   return Graph.flow(
