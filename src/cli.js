@@ -1,71 +1,20 @@
-// #!/usr/bin/env node
-/* global __dirname, process */
-/*
-import program from 'commander'
-import fs from 'fs'
-import graphlib from 'graphlib'
-import connect from '@buggyorg/component-library'
-import getStdin from 'get-stdin'
+#!/usr/bin/env node
+
+import * as cliExt from 'cli-ext'
 import {resolve} from './api'
-import path from 'path'
+import {connect} from '@buggyorg/library-client'
 
-var server = ''
-var defaultElastic = ' Defaults to BUGGY_COMPONENT_LIBRARY_HOST'
-
-if (process.env.BUGGY_COMPONENT_LIBRARY_HOST) {
-  server = process.env.BUGGY_COMPONENT_LIBRARY_HOST
-  defaultElastic += '=' + server
-} else {
-  server = 'http://localhost:9200'
-  defaultElastic += ' or if not set to http://localhost:9200'
-}
-
-function printJSON (json) {
-  if (program.nice) {
-    console.log(JSON.stringify(json, null, 2))
-  } else {
-    console.log(JSON.stringify(json))
-  }
-}
-
-function stdinOrFile (graphfile) {
-  if (!process.stdin.isTTY) {
-    return getStdin()
-  } else {
-    return new Promise((resolve, reject) => {
-      fs.readFile(graphfile, 'utf8', (err, contents) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(contents)
-        }
-      })
-    })
-  }
-}
-
-program
-  .version(JSON.parse(fs.readFileSync(path.join(__dirname, '/../package.json')))['version'])
-  .option('-h, --host <host>', 'The library elastic server to connect to.' + defaultElastic, String, server)
-  .option('-n, --nice', 'Pretty print all JSON output')
-  .option('-f, --file', '(Optional) The graphfile to resolve')
-  .arguments('[graphfile]')
-  .parse(process.argv)
-
-stdinOrFile(program.file)
-  .then((contents) => {
-    return graphlib.json.read(JSON.parse(contents))
+connect(process.env.BUGGY_LIBRARY_HOST)
+.then((client) => cliExt.input(process.argv[2])
+  .then((graphStr) => {
+    var graph
+    try {
+      graph = JSON.parse(graphStr)
+    } catch (err) {
+      console.error('[Resolve] Cannot parse input JSON.')
+    }
+    return resolve(graph, client.component)
   })
-  .then((graph) => {
-    var client = connect(program.host)
-    return resolve(graph, client.get)
-  })
-  .then((resGraph) => {
-    printJSON(graphlib.json.write(resGraph))
-  })
-  .catch((err) => {
-    console.error(err.message)
-    console.error(err.stack)
-    process.exit(1)
-  })
-*/
+)
+.then((res) => console.log(JSON.stringify(res, null, 2)))
+.catch((err) => console.error(err.stack))

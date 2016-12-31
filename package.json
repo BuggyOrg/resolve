@@ -20,7 +20,7 @@
   "author": "Maximilian Klein",
   "license": "MIT",
   "devDependencies": {
-    "@buggyorg/library-client": "0.4.1",
+    "@buggyorg/library-client": "0.4.2",
     "babel-cli": "^6.6.0",
     "babel-preset-es2015": "^6.5.0",
     "babel-register": "^6.5.2",
@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@buggyorg/graphtools": "^0.4.0-pre.7",
+    "cli-ext": "^1.1.0",
     "lodash": "^4.14.1",
     "promise-any": "^0.1.0",
     "promise-resolve-deep": "^1.0.2"
