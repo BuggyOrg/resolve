@@ -1,3 +1,0 @@
-digraph {
-  a[meta="test/nonExistent",version="1.2.3"];
-}

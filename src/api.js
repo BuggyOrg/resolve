@@ -34,9 +34,9 @@ const resolveReferences = curry((components, graph) => {
     components.map((cmp) => {
       if (Node.get('isRecursive', Graph.node(cmp.path, graph))) {
         // handle recursive node like an atomic
-        return Graph.replaceNode(cmp.path, Component.createNode(cleanReference(cmp), merge(cmp.component, {atomic: true})))
+        return Graph.replaceNode(cmp.id, Component.createNode(cleanReference(cmp), merge(cmp.component, {atomic: true})))
       } else {
-        return Graph.replaceNode(cmp.path, Component.createNode(cleanReference(cmp), cmp.component))
+        return Graph.replaceNode(cmp.id, Component.createNode(cleanReference(cmp), cmp.component))
       }
     })
   )(graph)
