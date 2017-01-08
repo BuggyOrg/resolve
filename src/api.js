@@ -10,8 +10,7 @@ const Component = Graph.Component
 const CompoundPath = Graph.CompoundPath
 
 function requiredGraphComponents (graph) {
-  // const req = _.partial(requiredComponentsByPath, graph, _)
-  return Graph.nodesDeepBy(Node.isReference, graph)
+  return Graph.nodesDeepBy(Node.isReference, graph).concat()
 }
 
 function cleanReference (ref, id) {
@@ -84,6 +83,9 @@ const storeComponent = curry((components, graph) => {
 })
 
 export const resolveWith = curry((client, graph) => {
+  if (Graph.nodes(graph).length === 0 && Graph.hasComponent('main', graph)) {
+    graph = Graph.component('main', graph)
+  }
   var needed = requiredGraphComponents(graph)
   return Promise.resolveDeep(needed.map((ref) => merge(ref, {component: client(ref.ref)})))
   .then((newComponents) => {
