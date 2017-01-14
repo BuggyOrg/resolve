@@ -2,6 +2,7 @@
 import curry from 'lodash/fp/curry'
 import merge from 'lodash/fp/merge'
 import omit from 'lodash/fp/omit'
+import uniqBy from 'lodash/fp/uniqBy'
 import * as Graph from '@buggyorg/graphtools'
 import * as Client from './client'
 require('promise-resolve-deep')(Promise)
@@ -76,7 +77,7 @@ export function resolve (graph, externalClients) {
  * Store the component in the graph component list.
  */
 const storeComponent = curry((components, graph) => {
-  graph.components = Graph.components(graph).concat(components
+  graph.components = Graph.components(graph).concat(uniqBy((c) => c.ref, components)
       .filter((c) => !Graph.hasComponent(c.component, graph))
       .map((c) => c.component))
   return graph
@@ -84,7 +85,9 @@ const storeComponent = curry((components, graph) => {
 
 export const resolveWith = curry((client, graph) => {
   if (Graph.nodes(graph).length === 0 && Graph.hasComponent('main', graph)) {
+    const components = Graph.components(graph).filter((c) => c.componentId !== 'main')
     graph = Graph.component('main', graph)
+    graph.components = graph.components.concat(components)
   }
   var needed = requiredGraphComponents(graph)
   return Promise.resolveDeep(needed.map((ref) => merge(ref, {component: client(ref.ref)})))
