@@ -87,7 +87,7 @@ export const resolveWith = curry((client, graph) => {
   if (Graph.nodes(graph).length === 0 && Graph.hasComponent('main', graph)) {
     const components = Graph.components(graph).filter((c) => c.componentId !== 'main')
     graph = Graph.component('main', graph)
-    graph.components = graph.components.concat(components)
+    graph.components = (graph.components || []).concat(components)
   }
   var needed = requiredGraphComponents(graph)
   return Promise.resolveDeep(needed.map((ref) => merge(ref, {component: client(ref.ref)})))

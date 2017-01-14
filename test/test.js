@@ -110,4 +110,47 @@ describe('Resolving port graph nodes', () => {
       })
     })
   })
+
+  describe('Main component', () => {
+    it('Uses the main component, if no other node is present', () => {
+      var graph = Graph.flow(
+        Graph.addComponent({componentId: 'main', version: '0.0.0',
+          ports: [{port: 'in', kind: 'input', type: 'IO'}]})
+      )()
+      return library.then((client) => resolve(graph, client.component))
+      .then((resGraph) => {
+        expect(Node.inputPorts(resGraph)).to.have.length(1)
+        expect(Node.hasPort('in', resGraph)).to.be.true
+        expect(Graph.hasComponent('main', resGraph)).to.be.false
+      })
+    })
+
+    it('Does not use the main component, if other nodes are present', () => {
+      var graph = Graph.flow(
+        Graph.addComponent({componentId: 'main', version: '0.0.0',
+          ports: [{port: 'in', kind: 'input', type: 'IO'}]}),
+        Graph.addNode({ref: 'test/atomic', name: 'a'})
+      )()
+      return library.then((client) => resolve(graph, client.component))
+      .then((resGraph) => {
+        expect(Graph.nodes(resGraph)).to.have.length(1)
+        expect(Graph.hasNode('/test/atomic', resGraph)).to.be.true
+        expect(Graph.hasComponent('main', resGraph)).to.be.true
+      })
+    })
+
+    it('Preserves existing components when switching to main component', () => {
+      var graph = Graph.flow(
+        Graph.addComponent({componentId: 'main', version: '0.0.0',
+          ports: [{port: 'in', kind: 'input', type: 'IO'}]}),
+        Graph.addComponent({componentId: 'a', version: '0.0.0',
+          ports: [{port: 'in2', kind: 'input', type: 'IO'}]})
+      )()
+      return library.then((client) => resolve(graph, client.component))
+      .then((resGraph) => {
+        expect(Graph.hasComponent('main', resGraph)).to.be.false
+        expect(Graph.hasComponent('a', resGraph)).to.be.true
+      })
+    })
+  })
 })
