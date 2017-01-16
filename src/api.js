@@ -32,9 +32,10 @@ function replaceCompoundImplementation (graph, compoundId, nodeId, newNode) {
 const resolveReferences = curry((components, graph) => {
   return Graph.flow(
     components.map((cmp) => {
-      if (Node.get('isRecursive', Graph.node(cmp.path, graph))) {
+      var node = Graph.node(cmp.path, graph)
+      if (Node.get('isRecursive', node)) {
         // handle recursive node like an atomic
-        return Graph.replaceNode(cmp.id, Component.createNode(cleanReference(cmp), merge(cmp.component, {atomic: true})))
+        return Graph.replaceNode(cmp.id, Component.createNode(cleanReference(cmp), merge(cmp.component, {atomic: true, settings: node.settings, metaInformation: node.metaInformation})))
       } else {
         return Graph.replaceNode(cmp.id, Component.createNode(cleanReference(cmp), cmp.component))
       }
