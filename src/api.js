@@ -11,7 +11,7 @@ const Component = Graph.Component
 const CompoundPath = Graph.CompoundPath
 
 function requiredGraphComponents (graph) {
-  return Graph.nodesDeepBy(Node.isReference, graph).concat()
+  return Graph.nodesDeepBy(Node.isReference, graph)
 }
 
 function cleanReference (ref, id) {
