@@ -35,7 +35,10 @@ const resolveReferences = curry((components, graph) => {
       var node = Graph.node(cmp.path, graph)
       if (Node.get('isRecursive', node)) {
         // handle recursive node like an atomic
-        return Graph.replaceNode(cmp.id, Component.createNode(cleanReference(cmp), merge(cmp.component, {atomic: true, settings: node.settings, metaInformation: node.metaInformation})))
+        var newComp = Component.createNode(cleanReference(cmp), merge(cmp.component, {atomic: true, settings: node.settings, metaInformation: node.metaInformation}))
+        newComp.nodes = []
+        newComp.edges = []
+        return Graph.replaceNode(cmp.id, newComp)
       } else {
         return Graph.replaceNode(cmp.id, Component.createNode(cleanReference(cmp), cmp.component))
       }
@@ -94,11 +97,11 @@ export const resolveWith = curry((client, graph) => {
   return Promise.resolveDeep(needed.map((ref) => merge(ref, {component: client(ref.ref)})))
   .then((newComponents) => {
     if (newComponents.length === 0) return graph // .disallowReferences()
-    return Graph.flow(
-      storeComponent(newComponents),
-      markRecursions(newComponents),
-      resolveReferences(newComponents),
-      resolveWith(client)
+    return Graph.namedFlow(
+      'Storing Components in the Graph', storeComponent(newComponents),
+      'Marking Recursions', markRecursions(newComponents),
+      'Resolving References', resolveReferences(newComponents),
+      'Recusively resolving graph components', resolveWith(client)
     )(graph)
   })
 })
