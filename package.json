@@ -36,6 +36,7 @@
   "dependencies": {
     "@buggyorg/library-client": "0.4.2",
     "@buggyorg/graphtools": "^0.4.0-pre.20",
+    "babel-runtime": "^6.23.0",
     "cli-ext": "^1.1.0",
     "lodash": "^4.14.1",
     "promise-any": "^0.1.0",
