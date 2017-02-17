@@ -44,7 +44,7 @@ describe('Resolving port graph nodes', () => {
     return library.then((client) => resolve(graph, client.component))
     .then((resGraph) => {
       expect(Graph.nodes(resGraph)).to.have.length(1)
-      expect(Graph.nodesDeep(resGraph)).to.have.length(2)
+      expect(Graph.nodesDeep(resGraph)).to.have.length(3)
       expect(Graph.components(resGraph)).to.have.length(2)
     })
   })
@@ -57,7 +57,7 @@ describe('Resolving port graph nodes', () => {
     return library.then((client) => resolve(graph, client.component))
     .then((resGraph) => {
       expect(Graph.nodes(resGraph)).to.have.length(1)
-      expect(Graph.nodesDeep(resGraph)).to.have.length(2)
+      expect(Graph.nodesDeep(resGraph)).to.have.length(3)
       expect(Graph.components(resGraph)).to.have.length(1)
     })
   })
@@ -70,7 +70,7 @@ describe('Resolving port graph nodes', () => {
     return library.then((client) => resolve(graph, client.component))
     .then((resGraph) => {
       expect(Graph.nodes(resGraph)).to.have.length(1)
-      expect(Graph.nodesDeep(resGraph)).to.have.length(3)
+      expect(Graph.nodesDeep(resGraph)).to.have.length(4)
       expect(Graph.components(resGraph)).to.have.length(2)
     })
   })
