@@ -42,7 +42,8 @@ const resolveReferences = curry((components, graph) => {
       } else {
         return Graph.replaceNode(cmp.id, Component.createNode(cleanReference(cmp), cmp.component))
       }
-    })
+    }),
+    {names: components.map((cmp) => 'Replacing ' + Node.component(cmp))}
   )(graph)
 })
 
@@ -97,11 +98,20 @@ export const resolveWith = curry((client, graph) => {
   return Promise.resolveDeep(needed.map((ref) => merge(ref, {component: client(ref.ref)})))
   .then((newComponents) => {
     if (newComponents.length === 0) return graph // .disallowReferences()
-    return Graph.namedFlow(
-      'Storing Components in the Graph', storeComponent(newComponents),
-      'Marking Recursions', markRecursions(newComponents),
-      'Resolving References', resolveReferences(newComponents),
-      'Recusively resolving graph components', resolveWith(client)
+    return Graph.flow(
+      storeComponent(newComponents),
+      markRecursions(newComponents),
+      resolveReferences(newComponents),
+      resolveWith(client),
+      {
+        name: 'Resolving components',
+        names: [
+          'Storing Components in the Graph',
+          'Marking Recursions',
+          'Resolving References',
+          'Recursively resolving graph components'
+        ]
+      }
     )(graph)
   })
 })
