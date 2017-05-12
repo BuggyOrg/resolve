@@ -91,8 +91,8 @@ describe('Resolving port graph nodes', () => {
       return library.then((client) => resolve(graph, client.component))
       .then((resGraph) => {
         expect(Graph.edgesDeep(resGraph)).to.have.length(1)
-        expect(Graph.successors('a', resGraph, true)).to.have.length(1)
-        expect(Node.name(Graph.node(Graph.successors('a', resGraph, true)[0], resGraph))).to.equal('a')
+        expect(Graph.successors('a', resGraph, {goIntoCompounds: true})).to.have.length(1)
+        expect(Node.name(Graph.node(Graph.successors('a', resGraph, {goIntoCompounds: true})[0], resGraph))).to.equal('a')
       })
     })
 

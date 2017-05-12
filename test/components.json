@@ -73,7 +73,7 @@
       ],
       "id": "edge",
       "nodes": [],
-      "edges": [{"from": {"node": "edge", "port": "in", "layer": "dataflow"}, "to": {"node": "edge", "port": "out", "layer": "dataflow"}}]
+      "edges": [{"from": {"node": "edge", "port": "in"}, "layer": "dataflow", "to": {"node": "edge", "port": "out"}}]
     },
     {
       "componentId": "test/edges",
@@ -84,8 +84,8 @@
       ],
       "id": "edges",
       "nodes": [{"ref": "test/edge", "id": "e", "version": "0.1.0"}],
-      "edges": [{"from": {"node": "edges", "port": "in", "layer": "dataflow"}, "to": {"node": "e", "port": "in", "layer": "dataflow"}},
-                {"from": {"node": "e", "port": "out", "layer": "dataflow"}, "to": {"node": "edges", "port": "out", "layer": "dataflow"}}]
+      "edges": [{"from": {"node": "edges", "port": "in"}, "layer": "dataflow", "to": {"node": "e", "port": "in"}},
+                {"from": {"node": "e", "port": "out"}, "to": {"node": "edges", "port": "out"}}]
     },
     {
       "componentId": "test/edges2",
